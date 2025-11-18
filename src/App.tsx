@@ -80,6 +80,31 @@ const PortfolioTimeline = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeSection, setActiveSection] = useState<'home' | 'about' | 'contact'>('home');
+  const [cardHeights, setCardHeights] = useState<{ [key: number]: number }>({});
+  
+  const cardRefs = React.useRef<{ [key: number]: HTMLDivElement | null }>({});
+
+  React.useEffect(() => {
+    // Measure collapsed heights for each card
+    const measureHeights = () => {
+      const heights: { [key: number]: number } = {};
+      experiences.forEach((_, index) => {
+        const card = cardRefs.current[index];
+        if (card) {
+          // Temporarily show only header to measure
+          const header = card.querySelector('.card-header') as HTMLElement;
+          if (header) {
+            heights[index] = header.offsetHeight + 64; // 64 = p-8 padding (32px top + 32px bottom)
+          }
+        }
+      });
+      setCardHeights(heights);
+    };
+
+    measureHeights();
+    window.addEventListener('resize', measureHeights);
+    return () => window.removeEventListener('resize', measureHeights);
+  }, []);
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -365,28 +390,32 @@ const PortfolioTimeline = () => {
                 {/* Card on the right */}
                 <div className="ml-[40%] w-[80%] pl-12">
                   <div
-                    className={`bg-slate-800/90 backdrop-blur-sm rounded-xl border-2 border-blue-500/30 hover:border-blue-400/60 transition-all duration-500 shadow-xl ${
+                    ref={(el) => { cardRefs.current[index] = el; }}
+                    className={`bg-slate-800/90 backdrop-blur-sm rounded-xl border-2 border-blue-500/30 hover:border-blue-400/60 transition-all duration-1000 shadow-xl ${
                       hoveredIndex === index ? 'scale-105' : 'scale-100'
                     }`}
                     style={{
-                      maxHeight: hoveredIndex === index ? '1000px' : '140px',
+                      maxHeight: hoveredIndex === index ? '1000px' : `${cardHeights[index] || 200}px`,
                       overflow: 'hidden'
                     }}
                     onMouseEnter={() => setHoveredIndex(index)}
                     onMouseLeave={() => setHoveredIndex(null)}
                   >
-                    <div className="p-5">
-                      <div className="text-sm text-blue-400 font-semibold mb-3">{exp.date}</div>
-                      <h3 className="text-3xl font-bold mb-2">{exp.title}</h3>
-                      <div className="text-blue-300 text-lg mb-4">{exp.company}</div>
+                    <div className="p-8">
+                      <div className="card-header">
+                        <div className="text-sm text-blue-400 font-semibold mb-3">{exp.date}</div>
+                        <h3 className="text-3xl font-bold mb-2">{exp.title}</h3>
+                        <div className="text-blue-300 text-lg">{exp.company}</div>
+                      </div>
                       <div 
-                        className="transition-opacity duration-300"
+                        className="transition-all duration-500"
                         style={{
                           opacity: hoveredIndex === index ? 1 : 0,
-                          display: hoveredIndex === index ? 'block' : 'none'
+                          maxHeight: hoveredIndex === index ? '1000px' : '0px',
+                          overflow: 'hidden'
                         }}
                       >
-                        <p className="text-gray-300 text-base mb-6 leading-relaxed">{exp.description}</p>
+                        <p className="text-gray-300 text-base mb-6 leading-relaxed mt-4">{exp.description}</p>
                         <div className="flex flex-wrap gap-2">
                           {exp.skills.map((skill, i) => (
                             <span
