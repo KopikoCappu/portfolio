@@ -5,6 +5,21 @@ import { Anchor } from 'lucide-react';
 const style = document.createElement('style');
 style.textContent = `
   @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400&display=swap');
+  
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  *::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Hide scrollbar for Firefox */
+  * {
+    scrollbar-width: none;
+  }
+  
+  /* Hide scrollbar for IE and Edge */
+  * {
+    -ms-overflow-style: none;
+  }
 `;
 document.head.appendChild(style);
 
@@ -19,61 +34,52 @@ interface Experience {
 
 const experiences: Experience[] = [
   {
-    date: 'Jan 2024',
-    title: 'Senior Developer',
-    company: 'Tech Corp',
-    description: 'Led a team building cloud-native apps and CI/CD pipelines, improving deployment speed by 40%.',
-    skills: ['React', 'Node.js', 'AWS'],
+    date: 'March 2022 - June 2022',
+    title: 'Digital Marketing Intern',
+    company: 'Ocean-Based Climate Solutions',
+    description: "Spearheaded digital marketing initiatives to promote company's brand and mission across online platforms. Conceptualized and created engaging Instagram stories, visually appealing infographics, and informative white papers. Conducted in-depth research on deep-sea upwelling and other innovative climate change solutions to educate audience.",
+    skills: ['Canva', 'Figma', 'InDesign'],
     position: 'left',
   },
   {
-    date: 'Jun 2023',
-    title: 'Full Stack Developer',
-    company: 'StartupXYZ',
-    description: 'Built scalable web apps serving 100k+ users. Optimized DB queries reducing load times by 60%.',
-    skills: ['TypeScript', 'PostgreSQL', 'Docker'],
+    date: 'May 2023 - Aug 2023',
+    title: 'Information and Technology Intern',
+    company: 'Kelly Services',
+    description: 'Performed detailed laptop inventory management, ensuring accurate tracking, updating, and documentation of all district devices. Conducted cleaning, diagnostics, and preventative maintenance on OCPS servers to support reliable infrastructure operations. Processed and updated BIOS configurations on OCPS laptops, improving device performance, security, and compliance across the district.',
+    skills: ['Windows OS', 'Excel', 'MacOS'],
     position: 'right',
   },
   {
-    date: 'Mar 2022',
-    title: 'Frontend Developer',
-    company: 'Digital Agency',
-    description: 'Developed responsive websites. Improved accessibility to AAA standards. Mirah Mirah Mirah Mirah',
-    skills: ['Vue.js', 'Tailwind', 'Figma'],
+    date: 'March 2025 - Present',
+    title: 'Software Automation Engineer',
+    company: 'University of Florida',
+    description: 'Built scalable Qualtrics survey systems and optimized data collection processes, reducing manual processing time by 95%. Developed automated workflows using Google Apps Script and Python macros, cutting repetitive tasks and lowering turnaround time for the foreign exchange program by 80%. Delivered actionable reports that supported decision-making across multiple departments, saving over 100+ staff hours annually.',
+    skills: ['Python', 'Google App Script', 'Oracle VirtualBox', 'Qualtrics'],
     position: 'left',
   },
   {
-    date: 'Sep 2021',
-    title: 'Junior Developer',
-    company: 'Innovation Labs',
-    description: 'Contributed to open-source projects and internal tools. Learned modern dev practices.',
-    skills: ['JavaScript', 'Git', 'REST APIs'],
+    date: 'Sep 2025 - Present',
+    title: 'UF CpE Capstone Design Teaching Assistant',
+    company: 'University of Florida',
+    description: 'Mentor and assist senior Computer Engineering students through the design lifecycle, from concept to prototype development. Provide technical guidance in embedded systems, PCB design, and engineering standards. Evaluate student deliverables, ensuring adherence to structured design methodology and engineering standards. Support lab sessions and foster professional communication, teamwork, and design ethics.',
+    skills: ['Altium', 'C++', 'PCBs'],
     position: 'right',
   },
   {
     date: 'May 2021',
-    title: 'Computer Science Degree',
-    company: 'University',
-    description: 'Graduated with honors. Focused on algorithms, software engineering, and web development.',
-    skills: ['Data Structures', 'Algorithms', 'OOP'],
+    title: 'AI/ML Epidemiology Research Assistant',
+    company: 'University of Florida Department of Epidemiology',
+    description: 'Assisting in the development of machine learning and large language models to understand and perform statistical analysis on real time viral data and prediction of growth patterns. Performing automation work on encoding genomic information, allowing regression and visualization of nucleotide and amino acid information. Streamlining passing information to AI models to cut down processing time and manual labor',
+    skills: ['Python', 'KMC', 'HiPerGator', 'Git', 'Bash'],
     position: 'left',
   },
-];
-
-// Positions along the curve for each experience
-const positions = [
-  { left: '48%', top: '8%' },
-  { left: '56%', top: '28%' },
-  { left: '44%', top: '48%' },
-  { left: '52%', top: '68%' },
-  { left: '48%', top: '88%' },
 ];
 
 const PortfolioTimeline = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
-  const timelineRef = React.useRef<HTMLDivElement>(null);  // <-- ADD THIS LINE
-
+  const [activeSection, setActiveSection] = useState<'home' | 'about' | 'contact'>('home');
+  const timelineRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -81,8 +87,6 @@ const PortfolioTimeline = () => {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
       
-      // BUFFER: Adjust this value to control when progress bar starts (in pixels)
-      // 0 = starts immediately after hero, 200 = starts 200px into timeline section, etc.
       const BUFFER = 230;
       const timelineStart = heroHeight + BUFFER;
       
@@ -93,7 +97,7 @@ const PortfolioTimeline = () => {
       
       const documentHeight = document.documentElement.scrollHeight;
       const scrollableHeight = documentHeight - windowHeight;
-      const timelineEnd = scrollableHeight - 100; // Stop 100px before document end
+      const timelineEnd = scrollableHeight - 100;
       const timelineScrollable = timelineEnd - timelineStart;
       const currentScrollInTimeline = Math.min(scrollY - timelineStart, timelineScrollable);
       
@@ -102,7 +106,7 @@ const PortfolioTimeline = () => {
     };
 
     window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial call
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -110,47 +114,176 @@ const PortfolioTimeline = () => {
     <div className="w-full" style={{ fontFamily: 'Quicksand, sans-serif' }}>
       {/* HERO/LANDING PAGE - Full Screen */}
       <section className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950">
-        {/* Background Image - Replace the URL with your image path */}
+        {/* Background Image */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: 'url("qQiC7Ug5pQuX5B8Di7PchL-1200-80.jpg")',
+            backgroundImage: 'url("e0c169110486337.5feef52cd7fda.png")',
             filter: 'blur(0px)'
-            // Or use a gradient as placeholder:
-            // background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
           }}
         />
 
-        {/* Glassmorphism Window Container */}
-        <div className="relative z-10 w-1/ max-w-6xl h-4/5 rounded-3xl overflow-hidden border border-white/20 shadow-2xl backdrop-blur-md bg-white/10">
-          {/* Content inside the glass window */}
-          <div className="relative w-full h-full flex items-center justify-center p-12">
-            {/* Optional: Split layout like the example */}
-            <div className="flex w-full h-full">
-              {/* Left side - frosted */}
+        {/* Glass Container - Shifts based on active section */}
+          <div
+            className={`relative z-10 flex gap-6 transition-all duration-700 ease-in-out ${
+              activeSection === 'home' ? 'left-2 w-[600px]' : 'w-[1200px]'
+            }`}>
 
-              {/* Right side - main content */}
-              <div className="flex-1 flex flex-col items-center justify-center text-center px-12">
-                <h1 className="text-8xl font-bold text-white mb-6 leading-tight">
-                  Minh <br/>Tran
-                </h1>
-                <p className="text-xl text-white/80 mb-8">
-                  Developer • Researcher
-                </p>
+          {/* Main Glassmorphism Window Container */}
+          <div className={`relative rounded-3xl overflow-hidden border border-white/20 shadow-2xl backdrop-blur-md bg-white/10 transition-all duration-700 ease-in-out h-[550px] ${
+            activeSection !== 'home' ? 'w-1/2' : 'w-full'
+          }`}>
+            {/* Content inside the main glass window */}
+            <div className="relative w-full h-full flex items-center justify-center p-12">
+              <div className="flex w-full h-full">
+                {/* Main content */}
+                <div className="flex-1 flex flex-col items-center justify-center text-center px-12">
+                  <h1 className="text-8xl font-bold text-white mb-6 leading-tight">
+                    Minh <br/>Tran
+                  </h1>
+                  <p className="text-xl text-white/80 mb-8">
+                    Developer • Researcher
+                  </p>
+                  <button 
+                    onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+                    className="px-8 py-4 bg-white/20 backdrop-blur-md hover:bg-white/30 rounded-full text-lg font-semibold text-white transition-all duration-300 hover:scale-105 border border-white/20"
+                  >
+                    My Journey
+                  </button>
+                </div>
+              </div>
+
+              {/* Navigation at top right */}
+              <div className="absolute top-8 flex gap-8 text-sm text-white/80">
                 <button 
-                  onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
-                  className="px-8 py-4 bg-white/20 backdrop-blur-md hover:bg-white/30 rounded-full text-lg font-semibold text-white transition-all duration-300 hover:scale-105 border border-white/20"
+                  onClick={() => setActiveSection('home')}
+                  className={`hover:text-white transition-colors ${activeSection === 'home' ? 'text-white font-semibold' : ''}`}
                 >
-                  Explore My Journey
+                  HOME
+                </button>
+                <button 
+                  onClick={() => setActiveSection('about')}
+                  className={`hover:text-white transition-colors ${activeSection === 'about' ? 'text-white font-semibold' : ''}`}
+                >
+                  ABOUT
+                </button>
+                <button 
+                  onClick={() => setActiveSection('contact')}
+                  className={`hover:text-white transition-colors ${activeSection === 'contact' ? 'text-white font-semibold' : ''}`}
+                >
+                  CONTACT
                 </button>
               </div>
             </div>
+          </div>
 
-            {/* Navigation at top right */}
-            <div className="absolute top-8 flex gap-8 text-sm text-white/80">
-              <a href="#" className="hover:text-white transition-colors">HOME</a>
-              <a href="#" className="hover:text-white transition-colors">ABOUT</a>
-              <a href="#" className="hover:text-white transition-colors">CONTACT</a>
+          {/* Secondary Panel - Slides in from right */}
+          <div className={`rounded-3xl overflow-hidden border border-white/20 shadow-2xl backdrop-blur-md bg-white/10 transition-all duration-700 ease-in-out ${
+            activeSection !== 'home' ? 'w-1/2 h-[550px] opacity-100 translate-x-0' : 'w-0 opacity-0 translate-x-full'
+          }`}>
+            <div className="relative w-full h-full p-12 overflow-y-auto">
+              {activeSection === 'about' && (
+                <div className="text-white">
+                  <h2 className="text-4xl font-bold mb-6">About Me</h2>
+                  <div className="space-y-4 text-white/90">
+                    <p className="text-lg leading-relaxed">
+                      I'm a  Computer Science student and Researcher at the University of Florida, 
+                      driven by curiosity and a love for automating technology.
+                    </p>
+                    <p className="text-lg leading-relaxed">
+                      My journey spans from digital marketing for climate change to software automation 
+                      and AI/ML epidemiology research. I thrive at the intersection of biology and software , building 
+                      solutions that make a real-world impact.
+                    </p>
+                    <div className="mt-8">
+                      <h3 className="text-2xl font-bold mb-4">Skills & Technologies</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {['Python', 'TypeScript', 'C++', 'React', 'Git', 'Machine Learning', 'Scripting', 'Automation'].map((skill, i) => (
+                          <span key={i} className="px-4 py-2 bg-white/20 rounded-full text-sm border border-white/30">
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="mt-8">
+                      <h3 className="text-2xl font-bold mb-4">Interests</h3>
+                      <p className="text-lg leading-relaxed">
+                        When I'm not coding, you'll find me watching nature documentaries, working on personal projects, or lifting weights. I believe in protecting the environment and using technology to benefit the world and not just for personal profit.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {activeSection === 'contact' && (
+                <div className="text-white">
+                  <h2 className="text-4xl font-bold mb-6">Get In Touch</h2>
+                  <div className="space-y-6">
+                    <p className="text-lg text-white/90 leading-relaxed">
+                      I'm always open to new opportunities, collaborations, and interesting conversations. 
+                      Feel free to reach out!
+                    </p>
+                    
+                    <div className="space-y-4 mt-8">
+                      <div className="flex items-center gap-4 p-4 bg-white/10 rounded-lg border border-white/20">
+                        <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                          <span className="text-2xl">📧</span>
+                        </div>
+                        <div>
+                          <div className="text-sm text-white/70">Email</div>
+                          <div className="text-lg font-semibold">minhtran60524@gmail.com</div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-4 p-4 bg-white/10 rounded-lg border border-white/20">
+                        <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                          <span className="text-2xl">💼</span>
+                        </div>
+                        <div>
+                          <div className="text-sm text-white/70">LinkedIn</div>
+                          <a
+                            href="https://www.linkedin.com/in/minhtran605/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-lg text-white font-semibold underline underline-offset-2 hover:text-blue-300 transition-colors"
+                          >
+                            linkedin.com/in/minhtran605
+                          </a>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-4 p-4 bg-white/10 rounded-lg border border-white/20">
+                        <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                          <span className="text-2xl">💻</span>
+                        </div>
+
+                        <div>
+                          <div className="text-sm text-white/70">GitHub</div>
+                          <a
+                            href="https://github.com/KopikoCappu"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-lg text-white font-semibold underline underline-offset-2 hover:text-blue-300 transition-colors"
+                          >
+                            github.com/KopikoCappu
+                          </a>
+                        </div>
+                      </div>
+
+                      
+                      <div className="flex items-center gap-4 p-4 bg-white/10 rounded-lg border border-white/20">
+                        <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                          <span className="text-2xl">📍</span>
+                        </div>
+                        <div>
+                          <div className="text-sm text-white/70">Location</div>
+                          <div className="text-lg font-semibold">Gainesville, Florida</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -193,7 +326,6 @@ const PortfolioTimeline = () => {
             }}
           />
 
-          {/* Scroll Indicator Dot */}
           {/* Scroll Indicator Anchor */}
           <div 
             className="fixed bg-gradient-to-br from-white-200 to-blue-400 rounded-full shadow-lg shadow-blue-500/50 z-50 flex items-center justify-center"
@@ -210,7 +342,8 @@ const PortfolioTimeline = () => {
             <Anchor className="text-white relative z-10" size={24} />
             <div className="absolute inset-0 w-full h-full bg-blue-400 rounded-full animate-ping opacity-75" />
           </div>
-         {/* Timeline Items */}
+
+          {/* Timeline Items */}
           <div className="space-y-24">
             {experiences.map((exp, index) => (
               <div 
