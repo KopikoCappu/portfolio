@@ -20,6 +20,7 @@ style.textContent = `
   * {
     -ms-overflow-style: none;
   }
+
 `;
 document.head.appendChild(style);
 
@@ -118,7 +119,7 @@ const PortfolioTimeline = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: 'url("e0c169110486337.5feef52cd7fda.png")',
+            backgroundImage: 'url("981ac6b1929d40ac4a8c055cdd0233cf.jpg")',
             filter: 'blur(0px)'
           }}
         />
@@ -130,7 +131,7 @@ const PortfolioTimeline = () => {
             }`}>
 
           {/* Main Glassmorphism Window Container */}
-          <div className={`relative rounded-3xl overflow-hidden border border-white/20 shadow-2xl backdrop-blur-md bg-white/10 transition-all duration-700 ease-in-out h-[550px] ${
+          <div className={`relative rounded-3xl overflow-hidden border border-white/20 shadow-2xl backdrop-blur-md bg-white/1 transition-all duration-700 ease-in-out h-[550px] ${
             activeSection !== 'home' ? 'w-1/2' : 'w-full'
           }`}>
             {/* Content inside the main glass window */}
@@ -178,7 +179,7 @@ const PortfolioTimeline = () => {
           </div>
 
           {/* Secondary Panel - Slides in from right */}
-          <div className={`rounded-3xl overflow-hidden border border-white/20 shadow-2xl backdrop-blur-md bg-white/10 transition-all duration-700 ease-in-out ${
+          <div className={`rounded-3xl overflow-hidden border border-white/20 shadow-2xl backdrop-blur-md bg-white/2 transition-all duration-700 ease-in-out ${
             activeSection !== 'home' ? 'w-1/2 h-[550px] opacity-100 translate-x-0' : 'w-0 opacity-0 translate-x-full'
           }`}>
             <div className="relative w-full h-full p-12 overflow-y-auto">
@@ -297,9 +298,9 @@ const PortfolioTimeline = () => {
       </section>
 
       {/* TIMELINE SECTION - Starts after hero */}
-      <section className="relative w-full min-h-screen bg-gradient-to-br from-slate-1000 via-slate-900 to-slate-950 text-white overflow-hidden py-16">
+      <section className="relative w-full min-h-screen bg-gradient-to-br from-slate-800 to-slate-950 text-white overflow-hidden py-16">
         {/* Gradient overlap at the top to blend with hero section */}
-        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-slate-950 to-transparent z-10 pointer-events-none" />
+        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black/78 to-slate-890 z-10 pointer-events-none" />
         
         {/* Header */}
         <div className="max-w-7xl mx-auto text-center mb-20 px-4 relative z-20">
