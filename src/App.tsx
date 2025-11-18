@@ -363,27 +363,41 @@ const PortfolioTimeline = () => {
                 </div>
 
                 {/* Card on the right */}
-                <div className="ml-[40%] w-[%] pl-12">
+                <div className="ml-[40%] w-[80%] pl-12">
                   <div
-                    className={`bg-slate-800/90 backdrop-blur-sm rounded-xl p-8 border-2 border-blue-500/30 hover:border-blue-400/60 transition-all duration-300 shadow-xl ${
+                    className={`bg-slate-800/90 backdrop-blur-sm rounded-xl border-2 border-blue-500/30 hover:border-blue-400/60 transition-all duration-500 shadow-xl ${
                       hoveredIndex === index ? 'scale-105' : 'scale-100'
                     }`}
+                    style={{
+                      maxHeight: hoveredIndex === index ? '1000px' : '140px',
+                      overflow: 'hidden'
+                    }}
                     onMouseEnter={() => setHoveredIndex(index)}
                     onMouseLeave={() => setHoveredIndex(null)}
                   >
-                    <div className="text-sm text-blue-400 font-semibold mb-3">{exp.date}</div>
-                    <h3 className="text-3xl font-bold mb-2">{exp.title}</h3>
-                    <div className="text-blue-300 text-lg mb-4">{exp.company}</div>
-                    <p className="text-gray-300 text-base mb-6 leading-relaxed">{exp.description}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {exp.skills.map((skill, i) => (
-                        <span
-                          key={`${index}-skill-${i}`}
-                          className="px-4 py-2 bg-blue-500/20 rounded-full text-sm text-blue-200 border border-blue-400/30"
-                        >
-                          {skill}
-                        </span>
-                      ))}
+                    <div className="p-5">
+                      <div className="text-sm text-blue-400 font-semibold mb-3">{exp.date}</div>
+                      <h3 className="text-3xl font-bold mb-2">{exp.title}</h3>
+                      <div className="text-blue-300 text-lg mb-4">{exp.company}</div>
+                      <div 
+                        className="transition-opacity duration-300"
+                        style={{
+                          opacity: hoveredIndex === index ? 1 : 0,
+                          display: hoveredIndex === index ? 'block' : 'none'
+                        }}
+                      >
+                        <p className="text-gray-300 text-base mb-6 leading-relaxed">{exp.description}</p>
+                        <div className="flex flex-wrap gap-2">
+                          {exp.skills.map((skill, i) => (
+                            <span
+                              key={`${index}-skill-${i}`}
+                              className="px-4 py-2 bg-blue-500/20 rounded-full text-sm text-blue-200 border border-blue-400/30"
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
