@@ -80,7 +80,6 @@ const PortfolioTimeline = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeSection, setActiveSection] = useState<'home' | 'about' | 'contact'>('home');
-  const timelineRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     const handleScroll = () => {
