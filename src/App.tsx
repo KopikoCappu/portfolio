@@ -85,6 +85,21 @@ const PortfolioTimeline = () => {
   const cardRefs = React.useRef<{ [key: number]: HTMLDivElement | null }>({});
 
   React.useEffect(() => {
+    // Set page title
+    document.title = "Minh Tran | Portfolio";
+    
+    // Set favicon (page icon)
+    let favicon = document.querySelector("link[rel*='icon']") as HTMLLinkElement;
+    if (!favicon) {
+      favicon = document.createElement('link');
+      favicon.rel = 'shortcut icon';
+      document.getElementsByTagName('head')[0].appendChild(favicon);
+    }
+    favicon.type = 'image/x-icon';
+    favicon.href = '1eca390a1a207fc06fba44b4ac3dd804.jpg'; // Replace with your icon URL
+  }, []);
+
+  React.useEffect(() => {
     // Measure collapsed heights for each card
     const measureHeights = () => {
       const heights: { [key: number]: number } = {};
@@ -388,10 +403,10 @@ const PortfolioTimeline = () => {
                 </div>
 
                 {/* Card on the right */}
-                <div className="ml-[40%] w-[80%] pl-12">
+                <div className="ml-[40%] w-[%] pl-12">
                   <div
                     ref={(el) => { cardRefs.current[index] = el; }}
-                    className={`bg-slate-800/90 backdrop-blur-sm rounded-xl border-2 border-blue-500/30 hover:border-blue-400/60 transition-all duration-1000 shadow-xl ${
+                    className={`bg-slate-800/90 backdrop-blur-sm rounded-xl border-2 border-blue-500/30 hover:border-blue-400/60 transition-all duration-500 shadow-xl ${
                       hoveredIndex === index ? 'scale-105' : 'scale-100'
                     }`}
                     style={{
