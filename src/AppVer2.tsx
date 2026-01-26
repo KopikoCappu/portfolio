@@ -57,13 +57,13 @@ const projects = [
     {
       title: "Tapper",
       category: "Fullstack Mobile Development",
-      description: "A high-performance rhythmic interface designed to bridge the gap between user intent and digital execution.",
+      description: "A proximity based social media app targeted at college students using NFC scanning with QR Code fallback. Data securely stored in Google Cloud Service - Firebase with user authentification and real-time handshake sessions.",
       image: "New Project (1).jpg"
     },
     {
       title: "Antibiotic Resistance Predictor",
       category: "Bioinformatics and Machine Learning",
-      description: "A predictive engine utilizing genomic k-mer analysis to forecast resistance patterns in microbial colonies.",
+      description: "A predictive machine learning model used to study and predict future dominant linages of microbes, using genomic sequence data and Python data processing in order to detect anomalous mutations and predicting antimicrobial resistance.",
       image: "https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=2080&auto=format&fit=crop"
     },
     {
