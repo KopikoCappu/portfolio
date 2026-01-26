@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 /* GLOBAL STYLE INJECTION */
 const style = document.createElement("style");
