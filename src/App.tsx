@@ -227,7 +227,7 @@ const PortfolioTimeline = () => {
                   <h2 className="text-4xl font-bold mb-6">About Me</h2>
                   <div className="space-y-4 text-white/90">
                     <p className="text-lg leading-relaxed">
-                      I'm a  Computer Science student and Researcher at the University of Florida, 
+                      I'm a Computer Science student and Researcher at the University of Florida, 
                       driven by curiosity and a love for automating technology.
                     </p>
                     <p className="text-lg leading-relaxed">
