@@ -149,7 +149,7 @@ const projects = [
           </div>
         )}
         {/* ================= SECTION 1: HERO ================= */}
-        <section className="snap-start relative w-full h-screen bg-[#0A0A0A] flex items-center justify-center overflow-hidden">
+        <section id="hero"className="snap-start relative w-full h-screen bg-[#0A0A0A] flex items-center justify-center overflow-hidden">
           <div className="absolute top-8 right-10 z-40 flex gap-8">
             <button onClick={() => setActiveSection("about")} className="text-[#EAead2] uppercase tracking-widest text-sm hover:opacity-70">About</button>
             <button onClick={() => setActiveSection("contact")} className="text-[#EAead2] uppercase tracking-widest text-sm hover:opacity-70">Contact</button>
