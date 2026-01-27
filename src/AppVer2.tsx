@@ -119,8 +119,8 @@ const projects = [
 
                 {activeSection === "about" ? (
                   <p className="text-xl font-[#EAead2] leading-relaxed text-[#EAead2]/80 font-serif italic">
-                    I am a Computer Science student at the University of Florida, I enjoy reducing ineffiencies through automation and eco-friendly tech work. 
-                  </p>
+                    CS @ UF / Machine-Learning Research @ UF Marini-Lab. I love nature videography, cooking new recipes (as you can tell by my kitchen-menu inspired portfolio), and protecting the environment.
+                  </p> 
                 ) : (
                   <div className="flex flex-col gap-6">
                     <div className="space-y-1">
