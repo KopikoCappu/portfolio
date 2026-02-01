@@ -69,7 +69,7 @@ const PortfolioPage = () => {
       document.getElementsByTagName('head')[0].appendChild(favicon);
     }
     favicon.type = 'image/x-icon';
-    favicon.href = 'public/IMG_2489.JPEG';
+    favicon.href = 'IMG_2489.JPEG';
 
     return () => {
       lenisInstance.destroy();
