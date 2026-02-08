@@ -265,7 +265,7 @@ const PortfolioPage = () => {
         </section>
 
         {/* MEET THE CHEF */}
-        <section id="meet-the-chef" className="relative w-full min-h-screen flex items-center justify-center overflow-hidden px-10 mt-40 pb-60git">
+        <section id="meet-the-chef" className="relative w-full min-h-screen flex items-center justify-center overflow-hidden px-10 mt-40 max-sm:pb-60">
           <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-20">
             <div className="flex flex-col justify-center">
               <span className="opacity-80 uppercase tracking-[0.4em] text-[12px] font-bold mb-6">Introduction</span>
