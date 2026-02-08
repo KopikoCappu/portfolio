@@ -42,11 +42,9 @@ const PortfolioPage = () => {
   const [activeSection, setActiveSection] = useState<"home" | "about" | "contact">("home");
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [lenis, setLenis] = useState<Lenis | null>(null);
-  const [visibleExperiences, setVisibleExperiences] = useState<Set<number>>(new Set());
   const [visibleProjects, setVisibleProjects] = useState<Set<number>>(new Set());
   const [isMobile, setIsMobile] = useState(false);
   
-  const experienceRefs = useRef<(HTMLDivElement | null)[]>([]);
   const projectRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   // Detect mobile/tablet
@@ -93,30 +91,6 @@ const PortfolioPage = () => {
       lenisInstance.destroy();
     };
   }, []);
-
-  // Intersection Observer for experiences (mobile only)
-  useEffect(() => {
-    if (!isMobile) return;
-    
-    const observers: IntersectionObserver[] = [];
-    
-    experienceRefs.current.forEach((ref, index) => {
-      if (ref) {
-        const observer = new IntersectionObserver(
-          ([entry]) => {
-            if (entry.isIntersecting) {
-              setVisibleExperiences(prev => new Set([...prev, index]));
-            }
-          },
-          { threshold: 0.3 }
-        );
-        observer.observe(ref);
-        observers.push(observer);
-      }
-    });
-
-    return () => observers.forEach(observer => observer.disconnect());
-  }, [isMobile]);
 
   // Intersection Observer for projects (mobile only)
   useEffect(() => {
@@ -338,7 +312,6 @@ const PortfolioPage = () => {
               {experiences.map((item, i) => (
                 <div 
                   key={i} 
-                  ref={(el) => { experienceRefs.current[i] = el; }}
                   onMouseEnter={() => setHoveredIndex(i)} 
                   onMouseLeave={() => setHoveredIndex(null)} 
                   className="group relative py-4 flex flex-col md:flex-row items-start"
