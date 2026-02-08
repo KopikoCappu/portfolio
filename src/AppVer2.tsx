@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Lenis from "@studio-freight/lenis";
 
 /* GLOBAL STYLE INJECTION */
@@ -42,6 +42,24 @@ const PortfolioPage = () => {
   const [activeSection, setActiveSection] = useState<"home" | "about" | "contact">("home");
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [lenis, setLenis] = useState<Lenis | null>(null);
+  const [visibleExperiences, setVisibleExperiences] = useState<Set<number>>(new Set());
+  const [visibleProjects, setVisibleProjects] = useState<Set<number>>(new Set());
+  const [isMobile, setIsMobile] = useState(false);
+  
+  const experienceRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const projectRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Detect mobile/tablet
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Initialize Lenis Smooth Scroll
   useEffect(() => {
@@ -62,9 +80,9 @@ const PortfolioPage = () => {
     requestAnimationFrame(raf);
 
     // Favicon Logic
-    let favicon = document.querySelector("link[rel*='icon']") as HTMLLinkElement;
+    let favicon = document.querySelector("link[rel*='icon']") as HTMLLinkElement | null;
     if (!favicon) {
-      favicon = document.createElement('link');
+      favicon = document.createElement('link') as HTMLLinkElement;
       favicon.rel = 'shortcut icon';
       document.getElementsByTagName('head')[0].appendChild(favicon);
     }
@@ -75,6 +93,54 @@ const PortfolioPage = () => {
       lenisInstance.destroy();
     };
   }, []);
+
+  // Intersection Observer for experiences (mobile only)
+  useEffect(() => {
+    if (!isMobile) return;
+    
+    const observers: IntersectionObserver[] = [];
+    
+    experienceRefs.current.forEach((ref, index) => {
+      if (ref) {
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting) {
+              setVisibleExperiences(prev => new Set([...prev, index]));
+            }
+          },
+          { threshold: 0.3 }
+        );
+        observer.observe(ref);
+        observers.push(observer);
+      }
+    });
+
+    return () => observers.forEach(observer => observer.disconnect());
+  }, [isMobile]);
+
+  // Intersection Observer for projects (mobile only)
+  useEffect(() => {
+    if (!isMobile) return;
+    
+    const observers: IntersectionObserver[] = [];
+    
+    projectRefs.current.forEach((ref, index) => {
+      if (ref) {
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting) {
+              setVisibleProjects(prev => new Set([...prev, index]));
+            }
+          },
+          { threshold: 0.2 }
+        );
+        observer.observe(ref);
+        observers.push(observer);
+      }
+    });
+
+    return () => observers.forEach(observer => observer.disconnect());
+  }, [isMobile]);
 
   const scrollToSection = (id: string) => {
     const target = document.getElementById(id);
@@ -171,8 +237,8 @@ const PortfolioPage = () => {
                   <div className="space-y-1">
                     <span className="text-[10px] uppercase tracking-[0.4em] block">Digital Reach</span>
                     <div className="flex flex-col gap-3">
-                      <a href="https://www.linkedin.com/in/minhtran605/" target="_blank" className="text-2xl hover:italic transition-all w-fit">LinkedIn</a>
-                      <a href="https://github.com/KopikoCappu" target="_blank" className="text-2xl hover:italic transition-all w-fit">GitHub</a>
+                      <a href="https://www.linkedin.com/in/minhtran605/" target="_blank" rel="noopener noreferrer" className="text-2xl hover:italic transition-all w-fit">LinkedIn</a>
+                      <a href="https://github.com/KopikoCappu" target="_blank" rel="noopener noreferrer" className="text-2xl hover:italic transition-all w-fit">GitHub</a>
                     </div>
                   </div>
                   <div className="space-y-1">
@@ -199,7 +265,7 @@ const PortfolioPage = () => {
             <button onClick={() => setActiveSection("contact")} className="uppercase tracking-widest text-sm hover:opacity-70">Contact</button>
           </div>
 
-          <div className="relative flex flex-col items-center">
+          <div className="relative flex flex-col items-center px-4">
             <h1 className="text-[clamp(4rem,12vw,10rem)] font-bold relative z-10" style={{ fontFamily: "'Playfair Display', serif", letterSpacing: "-0.03em" }}>
               PORTFOLIO
             </h1>
@@ -225,7 +291,7 @@ const PortfolioPage = () => {
         </section>
 
         {/* MEET THE CHEF */}
-        <section id="meet-the-chef" className="relative w-full min-h-screen flex items-center justify-center overflow-hidden px-10 mt-40 max-sm:pb-80">
+        <section id="meet-the-chef" className="relative w-full min-h-screen flex items-center justify-center overflow-hidden px-10 mt-40 pb-40">
           <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-20">
             <div className="flex flex-col justify-center">
               <span className="opacity-80 uppercase tracking-[0.4em] text-[12px] font-bold mb-6">Introduction</span>
@@ -265,14 +331,20 @@ const PortfolioPage = () => {
             
             <div className="mb-12 ml-5">
               <span className="uppercase tracking-[0.4em] text-[10px] text-[#EAead2] block mb-2 font-bold">Selected Works</span>
-                <h2 className="text-4xl font-serif italic text-[#EAead2]">Professional Experience</h2>
+              <h2 className="text-4xl font-serif italic text-[#EAead2]">Professional Experience</h2>
             </div>
 
             <div className="flex flex-col gap-10 ml-5 relative pb-25">
               {experiences.map((item, i) => (
-                <div key={i} onMouseEnter={() => setHoveredIndex(i)} onMouseLeave={() => setHoveredIndex(null)} className="group relative py-4 flex items-start">
+                <div 
+                  key={i} 
+                  ref={(el) => { experienceRefs.current[i] = el; }}
+                  onMouseEnter={() => setHoveredIndex(i)} 
+                  onMouseLeave={() => setHoveredIndex(null)} 
+                  className="group relative py-4 flex flex-col md:flex-row items-start"
+                >
                   
-                  <div className="w-full md:max-w-[50%] flex flex-col gap-2 transition-transform duration-700 ease-out group-hover:-translate-x-2 border-b border-white pb-20">
+                  <div className="w-full md:max-w-[50%] flex flex-col gap-2 transition-transform duration-700 ease-out md:group-hover:-translate-x-2 border-b border-white pb-8 md:pb-20">
                     <span className="block italic text-white text-xs font-serif">Course 0{i + 1}</span>
                     <h3 className="text-4xl md:text-5xl lg:text-6xl font-serif text-[#EAead2]/90 transition-all duration-300 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
                       {item.role}
@@ -280,7 +352,26 @@ const PortfolioPage = () => {
                     <span className="text-[13px] uppercase tracking-[0.2em] text-[#EAead2] font-sans">{item.period}</span>
                   </div>
 
-                  <div className={`hidden md:flex absolute right-0 top-0 w-[40%] h-full flex-col justify-center gap-6 pointer-events-none transition-all duration-700 ease-out ${hoveredIndex === i ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'}`}>
+                  {/* Mobile version - always visible */}
+                  <div className="md:hidden w-full mt-6 flex flex-col gap-6">
+                    <div>
+                      <span className="text-[15px] uppercase tracking-[0.3em] text-[#EAead2] block mb-4 font-bold">Chef's Notes</span>
+                      <p className="text-lg text-[#EAead2] font-serif italic leading-relaxed border-l-2 border-white pl-6">"{item.notes}"</p>
+                    </div>
+                    <div>
+                      <span className="text-[20px] uppercase tracking-[0.3em] text-[#EAead2]/70 block mb-4 font-bold">Primary Ingredients</span>
+                      <div className="flex flex-wrap gap-2">
+                        {item.ingredients.map((ing, idx) => (
+                          <span key={idx} className="px-3 py-1 border border-[#EAead2]/70 rounded-full text-[15px] uppercase tracking-widest text-[#EAead2]">{ing}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Desktop version - hover only */}
+                  <div className={`hidden md:flex absolute right-0 top-0 w-[40%] h-full flex-col justify-center gap-6 pointer-events-none transition-all duration-700 ease-out ${
+                    hoveredIndex === i ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'
+                  }`}>
                     <div>
                       <span className="text-[15px] uppercase tracking-[0.3em] text-[#EAead2] block mb-4 font-bold">Chef's Notes</span>
                       <p className="text-lg text-[#EAead2] font-serif italic leading-relaxed border-l-2 border-white pl-6 text-wrap">"{item.notes}"</p>
@@ -298,9 +389,9 @@ const PortfolioPage = () => {
               ))}
             </div>
           </div>
-            <button onClick={() => scrollToSection("current-dishes")} className="absolute bottom-8 left-1/2 -translate-x-1/2 group flex flex-col items-center gap-2 ">
+          <button onClick={() => scrollToSection("current-dishes")} className="absolute bottom-8 left-1/2 -translate-x-1/2 group flex flex-col items-center gap-2">
             <span className="uppercase tracking-[0.5em] text-[20px] group-hover:tracking-[0.6em] transition-all duration-500 text-[#EAead2]">Current Dishes</span>
-            <svg className="w-6 h-6 text-[#EAead2] opacity-60 animate-bounceslow mb-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-6 h-6 text-[#EAead2] opacity-60 animate-bounce-slow mb-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
             </svg>
           </button>
@@ -315,16 +406,29 @@ const PortfolioPage = () => {
             </div>
             <div className="flex flex-col gap-40">
               {projects.map((project, index) => (
-                <div key={index} className={`flex flex-col md:flex-row gap-12 items-center ${index % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}>
-                  <div className="w-full md:w-3/5 group relative cursor-crosshair">
+                <div 
+                  key={index} 
+                  ref={(el) => { projectRefs.current[index] = el; }}
+                  className={`flex flex-col md:flex-row gap-12 items-center ${index % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}
+                >
+                  <div className="w-full md:w-3/5 group relative cursor-pointer">
                     <div className="relative overflow-hidden aspect-[16/9] rounded-sm">
                       <img 
                         src={project.image} 
                         alt={project.title}
-                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+                        className={`w-full h-full object-cover transition-all duration-700 ${
+                          isMobile && visibleProjects.has(index)
+                            ? 'grayscale-0 scale-100' 
+                            : 'grayscale md:group-hover:grayscale-0 md:group-hover:scale-105'
+                        }`}
                       />
                     </div>
-                    <div className="overflow-hidden max-h-0 group-hover:max-h-60 transition-all duration-700">
+                    {/* Mobile version - always visible */}
+                    <div className="md:hidden pt-4 border-l border-[#EAead2] pl-6 mt-4">
+                      <p className="text-xl font-serif italic opacity-70 leading-relaxed">"{project.description}"</p>
+                    </div>
+                    {/* Desktop version - hover only */}
+                    <div className="hidden md:block overflow-hidden transition-all duration-700 max-h-0 group-hover:max-h-60">
                       <div className="pt-4 border-l border-[#EAead2] pl-6 mt-4">
                         <p className="text-xl font-serif italic opacity-70 leading-relaxed">"{project.description}"</p>
                       </div>
