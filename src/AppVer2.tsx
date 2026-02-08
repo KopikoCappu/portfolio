@@ -203,12 +203,12 @@ const PortfolioPage = () => {
             <h1 className="text-[clamp(4rem,12vw,10rem)] font-bold relative z-10" style={{ fontFamily: "'Playfair Display', serif", letterSpacing: "-0.03em" }}>
               PORTFOLIO
             </h1>
-            <div className="pointer-events-none flex items-center gap-4 -translate-x-[120%] translate-y-[-370%] md:-translate-x-[180%] md:-translate-y-[440%] lg:-translate-x-[240%] lg:-translate-y-[500%] xl:-translate-x-[280%] xl:-translate-y-[560%]">
+            <div className="pointer-events-none flex items-center gap-4 -translate-x-[100%] translate-y-[-370%] md:-translate-x-[180%] md:-translate-y-[440%] lg:-translate-x-[240%] lg:-translate-y-[500%] xl:-translate-x-[280%] xl:-translate-y-[560%]">
               <div className="w-10 h-10 border-2 border-[#EAead2] rounded-full" />
               <div className="w-24 h-10 border-2 border-[#EAead2] rounded-full" />
             </div>
 
-            <div className="pointer-events-none flex items-center gap-4 translate-x-[120%] -translate-y-[80%] md:translate-x-[180%] md:-translate-y-[140%] lg:translate-x-[240%] md:-translate-y-[160%] xl:translate-x-[280%] xl:-translate-y-[200%]">
+            <div className="pointer-events-none flex items-center gap-4 translate-x-[100%] -translate-y-[80%] md:translate-x-[180%] md:-translate-y-[140%] lg:translate-x-[240%] md:-translate-y-[160%] xl:translate-x-[280%] xl:-translate-y-[200%]">
               <div className="w-10 h-10 bg-[#EAead2] rounded-full" />
               <div className="w-24 h-10 bg-[#EAead2] rounded-full flex items-center justify-center">
                 <span className="text-md italic text-black" style={{ fontFamily: "'Playfair Display', serif" }}>Minh Tran</span>
