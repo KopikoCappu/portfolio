@@ -134,6 +134,7 @@ const PortfolioPage = () => {
       period: "Pod / Dec 2025 - Present",
       notes: "Built and launched Pod — a real-time group event planning iOS app — as a solo developer. Designed and shipped features including live GPS location tracking, group trip coordination, broadcast notifications, and Firebase-backed auth. Currently in beta via TestFlight with active users.",
       ingredients: ["React.js (Native)", "Typescript", "Google Cloud Platform", "IOS"]
+      
     },
     {
       role: "Machine Learning / Microbe Researcher",
@@ -157,7 +158,9 @@ const PortfolioPage = () => {
       title: "Pod",
       category: "Fullstack Mobile App Development",
       description: "A real time group planning and coordination travel app. Live location tracking, RSVP stops, push notifications, broadcasting, custom events. Plan Anything, Go anywhere.",
-      image: "New Project (6).png"
+      image: "New Project (6).png",
+      link: "https://podplananything.com"
+
     },
     {
       title: "Antibiotic Resistance Predictor",
@@ -175,7 +178,9 @@ const PortfolioPage = () => {
       title: "Nasa Artemis Informative Countdown",
       category: "User Experience / Front End",
       description: "Built a fully responsive, single-page mission website for NASA's Artemis II launch — featuring a live countdown timer, animated starfield, real NASA photography, and crew profiles for all four astronauts. Designed with a cinematic dark space aesthetic using custom typography, scroll-triggered animations, and a complete mission timeline from liftoff to splashdown.",
-      image: "nasawebsite.png"
+      image: "nasawebsite.png",
+      link: "https://nasaartemis.vercel.app"
+
     }
   ];
 
@@ -391,8 +396,13 @@ const PortfolioPage = () => {
                   ref={(el) => { projectRefs.current[index] = el; }}
                   className={`flex flex-col md:flex-row gap-12 items-center ${index % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}
                 >
-                  <div className="w-full md:w-3/5 group relative cursor-pointer">
-                    <div className="relative overflow-hidden aspect-[16/9] rounded-sm">
+                  <a 
+                    href={project.link ?? undefined}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`w-full md:w-3/5 group relative ${project.link ? 'cursor-pointer' : 'cursor-default'}`}
+                  >
+                      <div className="relative overflow-hidden aspect-[16/9] rounded-sm">
                       <img 
                         src={project.image} 
                         alt={project.title}
@@ -413,7 +423,7 @@ const PortfolioPage = () => {
                         <p className="text-xl font-serif italic opacity-70 leading-relaxed">"{project.description}"</p>
                       </div>
                     </div>
-                  </div>
+                  </a>
                   <div className={`w-full md:w-2/5 ${index % 2 !== 0 ? 'md:text-right' : 'md:text-left'}`}>
                     <span className="text-[10px] uppercase tracking-[0.4em] block mb-2">Recipe 0{index + 1}</span>
                     <h3 className="text-4xl md:text-6xl font-serif italic mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>{project.title}</h3>
