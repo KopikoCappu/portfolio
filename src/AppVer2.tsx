@@ -131,7 +131,7 @@ const PortfolioPage = () => {
       {
       role: "Founder/Solo Developer",
       company: "Pod",
-      period: "Dec 2025 - Present",
+      period: "Pod / Dec 2025 - Present",
       notes: "Built and launched Pod — a real-time group event planning iOS app — as a solo developer. Designed and shipped features including live GPS location tracking, group trip coordination, broadcast notifications, and Firebase-backed auth. Currently in beta via TestFlight with active users.",
       ingredients: ["React.js (Native)", "Typescript", "Google Cloud Platform", "IOS"]
     },
@@ -170,6 +170,12 @@ const PortfolioPage = () => {
       category: "Automation Systems",
       description: "Developed multi-layer survey automated application system facilitating the exchange of UF students with the University of Kyoto. Reducing manual labor by 98% using Google App Script, Python, Gmail API, and Qualtrics. ",
       image: "screenshot_2025-01-20_at_10.17.12_am.jpg"
+    },
+    {
+      title: "Nasa Artemis Informative Countdown",
+      category: "User Experience / Front End",
+      description: "Built a fully responsive, single-page mission website for NASA's Artemis II launch — featuring a live countdown timer, animated starfield, real NASA photography, and crew profiles for all four astronauts. Designed with a cinematic dark space aesthetic using custom typography, scroll-triggered animations, and a complete mission timeline from liftoff to splashdown.",
+      image: "nasawebsite.png"
     }
   ];
 
