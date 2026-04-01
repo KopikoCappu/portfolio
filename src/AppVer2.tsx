@@ -128,6 +128,13 @@ const PortfolioPage = () => {
   };
 
   const experiences = [
+      {
+      role: "Founder/Solo Developer",
+      company: "Pod",
+      period: "Dec 2025 - Present",
+      notes: "Built and launched Pod — a real-time group event planning iOS app — as a solo developer. Designed and shipped features including live GPS location tracking, group trip coordination, broadcast notifications, and Firebase-backed auth. Currently in beta via TestFlight with active users.",
+      ingredients: ["React.js (Native)", "Typescript", "Google Cloud Platform", "IOS"]
+    },
     {
       role: "Machine Learning / Microbe Researcher",
       company: "Epi-Logic Lab",
@@ -142,21 +149,15 @@ const PortfolioPage = () => {
       notes: "Developed end-to-end automation pipelines that reduced manual data entry by 98%. Focused on building resilient error-handling systems and scalable infrastructure.",
       ingredients: ["Python", "Google App Script", "JavaScript", "Linux", "Qualtrics"]
     },
-    {
-      role: "IT Intern",
-      company: "Kelly Services Inc.",
-      period: "Kelly Services / Summer 2023",
-      notes: "Managing OCPS laptop inventory through Excel databasing, enabling quick lookup and efficient tracking, performing data processing to streamline workflows, and automating BIOS configuration and updates.",
-      ingredients: ["Excel", "SQL", "Linux", "IOS"]
-    },
+
   ];
 
   const projects = [
     {
-      title: "Tapper",
-      category: "Fullstack Mobile Development",
-      description: "A proximity based social media app targeted at college students using NFC scanning with QR Code fallback. Data securely stored in Google Cloud Service - Firebase with user authentification and real-time handshake sessions.",
-      image: "New Project (1).jpg"
+      title: "Pod",
+      category: "Fullstack Mobile App Development",
+      description: "A real time group planning and coordination travel app. Live location tracking, RSVP stops, push notifications, broadcasting, custom events. Plan Anything, Go anywhere.",
+      image: "New Project (6).png"
     },
     {
       title: "Antibiotic Resistance Predictor",
