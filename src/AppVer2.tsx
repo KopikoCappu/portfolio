@@ -35,6 +35,10 @@ style.textContent = `
   .animate-bounce-slow {
     animation: bounce-slow 2s infinite;
   }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 `;
 document.head.appendChild(style);
 
