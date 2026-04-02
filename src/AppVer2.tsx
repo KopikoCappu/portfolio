@@ -400,7 +400,7 @@ const PortfolioPage = () => {
                     href={project.link ?? undefined}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`w-full md:w-3/5 group relative`}
+                    className={`w-full md:w-3/5 group relative no-underline text-inherit ${project.link ? 'cursor-pointer' : 'cursor-default'}`}
                   >
                       <div className="relative overflow-hidden aspect-[16/9] rounded-sm">
                       <img 
