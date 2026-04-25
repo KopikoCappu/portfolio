@@ -1,13 +1,1598 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>portfolio</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minh Tran — Field Notes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --yellow: #FFD100;
+      --yellow-dim: rgba(255, 209, 0, 0.10);
+      --yellow-border: rgba(255, 209, 0, 0.28);
+      --black: #090909;
+      --dark: #0F0F0F;
+      --dark-2: #181818;
+      --off-white: #F2EDE3;
+      --muted: rgba(242, 237, 227, 0.48);
+      --muted-2: rgba(242, 237, 227, 0.18);
+      --border: rgba(242, 237, 227, 0.07);
+      --border-hover: rgba(242, 237, 227, 0.14);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'EB Garamond', Georgia, serif;
+      background: var(--black);
+      color: var(--off-white);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* FILM GRAIN OVERLAY */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.038;
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      padding: 22px 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s, border-color 0.4s;
+    }
+
+    nav.scrolled {
+      background: rgba(9, 9, 9, 0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      text-decoration: none;
+    }
+
+    .nav-monogram {
+      width: 36px;
+      height: 36px;
+      background: var(--yellow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 15px;
+      color: var(--black);
+      letter-spacing: 0;
+      flex-shrink: 0;
+    }
+
+    .nav-wordmark {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--muted);
+      line-height: 1.3;
+    }
+
+    .nav-wordmark span {
+      display: block;
+      font-weight: 400;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      opacity: 0.6;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 44px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--yellow);
+      transition: width 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--off-white); }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 130px 52px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Firefly canvas — fills entire hero */
+    #fireflies {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Warm amber glow */
+    #hero::before {
+      content: '';
+      position: absolute;
+      right: -80px;
+      top: 15%;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(ellipse, rgba(255, 180, 30, 0.065) 0%, transparent 68%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Topographic lines */
+    #hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,209,0,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,209,0,0.015) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse 80% 80% at 100% 50%, black 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Bird silhouette watermark */
+    .hero-bird-watermark {
+      position: absolute;
+      right: 3%;
+      top: 18%;
+      width: 52%;
+      opacity: 0.042;
+      color: var(--off-white);
+      pointer-events: none;
+      z-index: 0;
+      transform: scaleX(-1); /* face left */
+    }
+
+    .hero-bird-watermark svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* All hero content sits above canvas/watermark */
+    .hero-meta-row,
+    .hero-name,
+    .hero-yellow-bar,
+    .hero-bottom-row {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 56px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.15s both;
+    }
+
+    .hero-meta-item {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .hero-meta-item.accent {
+      color: var(--yellow);
+      border: 1px solid var(--yellow-border);
+      padding: 4px 12px;
+    }
+
+    /* Pulsing recording dot */
+    .recording-indicator {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .rec-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--yellow);
+      flex-shrink: 0;
+      animation: recPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes recPulse {
+      0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(255,209,0,0.5); }
+      50% { opacity: 0.6; transform: scale(0.85); box-shadow: 0 0 0 4px rgba(255,209,0,0); }
+    }
+
+    .hero-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(96px, 17vw, 210px);
+      line-height: 0.87;
+      letter-spacing: -0.025em;
+      text-transform: uppercase;
+      color: var(--off-white);
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.3s both;
+    }
+
+    .hero-name .line2 {
+      color: transparent;
+      -webkit-text-stroke: 1.5px rgba(242, 237, 227, 0.8);
+    }
+
+    .hero-yellow-bar {
+      height: 7px;
+      background: var(--yellow);
+      margin: 36px 0;
+      transform-origin: left;
+      transform: scaleX(0);
+      opacity: 0;
+      animation: barExpand 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.65s both;
+    }
+
+    @keyframes barExpand {
+      to { transform: scaleX(1); opacity: 1; }
+    }
+
+    .hero-bottom-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.85s both;
+    }
+
+    .hero-disciplines {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .hero-discipline {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .hero-discipline::before {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 1px;
+      background: var(--yellow);
+      flex-shrink: 0;
+    }
+
+    .hero-location {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-end;
+    }
+
+    .hero-scroll-indicator {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .hero-scroll-indicator:hover { opacity: 0.7; }
+
+    .scroll-line {
+      width: 1px;
+      height: 52px;
+      background: linear-gradient(to bottom, var(--yellow), transparent);
+      animation: scrollPulse 2.2s ease-in-out infinite;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .scroll-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--muted);
+      writing-mode: vertical-rl;
+      margin-top: 6px;
+    }
+
+    /* ─── SHARED ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.75s ease, transform 0.75s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
+    .eyebrow {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      margin-bottom: 18px;
+    }
+
+    .section-heading {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(52px, 6vw, 84px);
+      text-transform: uppercase;
+      line-height: 0.88;
+      letter-spacing: -0.025em;
+      margin-bottom: 20px;
+    }
+
+    .section-heading .ghost {
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(242, 237, 227, 0.2);
+    }
+
+    .yellow-rule {
+      width: 56px;
+      height: 3px;
+      background: var(--yellow);
+      margin-bottom: 56px;
+    }
+
+    /* ─── ABOUT ─── */
+    #about {
+      padding: 120px 52px;
+      background: var(--dark);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .about-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    /* ── NatGeo portrait frame ── */
+    .photo-frame { position: relative; }
+
+    .natgeo-portrait {
+      position: relative;
+      aspect-ratio: 3/4;
+      background: var(--dark-2);
+      overflow: hidden;
+    }
+
+    .natgeo-portrait > img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* The full yellow rectangle — sits inset on the photo */
+    .ng-frame-rect {
+      position: absolute;
+      inset: 18px 18px 64px 18px;
+      border: 3px solid var(--yellow);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* Brand mark top-right — mirrors NAT GEO WILD placement */
+    .ng-brand {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 4;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(6px);
+      padding: 6px 10px 6px 6px;
+    }
+
+    .ng-brand-square {
+      width: 26px;
+      height: 26px;
+      background: var(--yellow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 11px;
+      color: var(--black);
+      flex-shrink: 0;
+      letter-spacing: 0;
+    }
+
+    .ng-brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+
+    .ng-brand-sub {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.75);
+    }
+
+    .ng-brand-main {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 17px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: white;
+      line-height: 1.05;
+    }
+
+    /* Coordinates strip along bottom */
+    .ng-coords {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 3;
+      padding: 8px 14px;
+      background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      text-align: center;
+    }
+
+    .photo-caption-block {
+      margin-top: 14px;
+      border-left: 2px solid var(--yellow);
+      padding-left: 14px;
+    }
+
+    .photo-caption-block .cap-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .photo-caption-block .cap-text {
+      font-size: 13px;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* Classification / specimen card */
+    .classification-card {
+      background: var(--dark-2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--yellow);
+      padding: 22px 26px;
+      margin-bottom: 36px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Specimen reference tag — top-right corner */
+    .specimen-ref {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: var(--yellow);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 8px;
+      font-weight: 900;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--black);
+      padding: 3px 10px;
+    }
+
+    .classif-row {
+      display: flex;
+      gap: 16px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .classif-row:last-child { border-bottom: none; }
+
+    .classif-key {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      width: 96px;
+      flex-shrink: 0;
+      padding-top: 3px;
+    }
+
+    .classif-val {
+      font-size: 15px;
+      color: var(--off-white);
+      line-height: 1.5;
+    }
+
+    .about-body {
+      font-size: 18px;
+      line-height: 1.78;
+      color: rgba(242, 237, 227, 0.78);
+      margin-bottom: 20px;
+    }
+
+    .about-body em { font-style: italic; }
+
+    .skills-section { margin-top: 36px; }
+
+    .skills-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 20px;
+    }
+
+    .skill-tag {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      transition: color 0.2s, border-color 0.2s;
+      cursor: default;
+    }
+
+    .skill-tag:hover {
+      color: var(--yellow);
+      border-color: var(--yellow-border);
+    }
+
+    /* ─── EXPERIENCE ─── */
+    #experience {
+      padding: 120px 52px;
+    }
+
+    .exp-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .exp-entry {
+      display: grid;
+      grid-template-columns: 80px 1fr 280px;
+      gap: 48px;
+      border-top: 1px solid var(--border);
+      padding: 44px 0;
+      transition: border-color 0.3s;
+      align-items: start;
+    }
+
+    .exp-entry:last-child { border-bottom: 1px solid var(--border); }
+    .exp-entry:hover { border-color: var(--yellow-border); }
+
+    .exp-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 52px;
+      font-weight: 900;
+      color: var(--yellow);
+      opacity: 1;
+      line-height: 1;
+      padding-top: 6px;
+    }
+
+    .exp-role {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(26px, 3vw, 38px);
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      line-height: 0.95;
+      margin-bottom: 8px;
+    }
+
+    .exp-org {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      margin-bottom: 18px;
+    }
+
+    .exp-desc {
+      font-size: 16px;
+      line-height: 1.72;
+      color: var(--muted);
+      max-width: 540px;
+    }
+
+    .exp-period {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    /* "Observed:" micro-label */
+    .exp-observed {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      opacity: 0.6;
+      margin-bottom: 14px;
+    }
+
+    .exp-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .exp-pill {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: var(--yellow);
+      padding: 4px 10px;
+    }
+
+    /* ─── PROJECTS ─── */
+    #projects {
+      padding: 120px 52px;
+      background: var(--dark);
+      border-top: 1px solid var(--border);
+    }
+
+    .projects-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .project-featured {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      border: 1px solid var(--border);
+      padding: 48px;
+      margin-bottom: 3px;
+      background: var(--dark-2);
+      transition: border-color 0.3s;
+    }
+
+    .project-featured:hover { border-color: var(--yellow-border); }
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3px;
+    }
+
+    .project-card {
+      background: var(--dark-2);
+      border: 1px solid var(--border);
+      padding: 40px;
+      transition: border-color 0.3s;
+      position: relative;
+    }
+
+    .project-card:hover { border-color: var(--yellow-border); }
+
+    .dispatch-tag {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      margin-bottom: 18px;
+    }
+
+    .project-photo {
+      position: relative;
+      margin-bottom: 28px;
+    }
+
+    .project-photo-box {
+      aspect-ratio: 16/9;
+      background: var(--black);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.3s;
+    }
+
+    .project-card:hover .project-photo-box,
+    .project-featured:hover .project-photo-box {
+      border-color: rgba(255,209,0,0.2);
+    }
+
+    .project-photo-box::before,
+    .project-photo-box::after {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-color: var(--yellow);
+      border-style: solid;
+      opacity: 0.4;
+      z-index: 2;
+    }
+
+    .project-photo-box::before {
+      top: 8px; left: 8px;
+      border-width: 1.5px 0 0 1.5px;
+    }
+
+    .project-photo-box::after {
+      bottom: 8px; right: 8px;
+      border-width: 0 1.5px 1.5px 0;
+    }
+
+    .project-photo-box img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.55s ease;
+    }
+
+    .project-card:hover .project-photo-box img,
+    .project-featured:hover .project-photo-box img {
+      transform: scale(1.04);
+    }
+
+    .photo-slot-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+      z-index: 1;
+      text-align: center;
+      padding: 0 20px;
+      line-height: 2;
+    }
+
+    .project-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(30px, 3.5vw, 44px);
+      text-transform: uppercase;
+      letter-spacing: -0.015em;
+      line-height: 0.93;
+      margin-bottom: 9px;
+    }
+
+    .project-cat {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      margin-bottom: 18px;
+    }
+
+    .project-desc {
+      font-size: 15px;
+      line-height: 1.68;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .project-tech {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+
+    .tech-tag {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 3px 9px;
+    }
+
+    .project-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      text-decoration: none;
+      transition: gap 0.2s;
+    }
+
+    .project-link:hover { gap: 12px; }
+
+    /* ─── CONTACT ─── */
+    #contact {
+      padding: 130px 52px 100px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #contact::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      width: 1px;
+      height: 80px;
+      background: linear-gradient(to bottom, transparent, var(--yellow));
+    }
+
+    .contact-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .contact-headline {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(72px, 11vw, 140px);
+      text-transform: uppercase;
+      line-height: 0.87;
+      letter-spacing: -0.03em;
+      margin-bottom: 32px;
+    }
+
+    .contact-headline .outline {
+      color: transparent;
+      -webkit-text-stroke: 1.5px rgba(242, 237, 227, 0.2);
+    }
+
+    .contact-body {
+      font-size: 20px;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 560px;
+      margin: 0 auto 52px;
+    }
+
+    .contact-ctas {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .cta-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--yellow);
+      color: var(--black);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 15px 32px;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .cta-primary:hover { opacity: 0.88; transform: translateY(-2px); }
+
+    .cta-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--border);
+      color: var(--off-white);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 15px 28px;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .cta-secondary:hover { border-color: var(--yellow-border); color: var(--yellow); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      padding: 28px 52px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-copy {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--yellow); }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(26px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 960px) {
+      nav { padding: 18px 24px; }
+      #hero, #about, #experience, #projects, #contact { padding-left: 24px; padding-right: 24px; }
+
+      .about-grid { grid-template-columns: 1fr; gap: 48px; }
+      .photo-frame { max-width: 300px; }
+
+      .exp-entry { grid-template-columns: 1fr; gap: 12px; }
+      .exp-num { font-size: 36px; }
+
+      .project-featured { grid-template-columns: 1fr; gap: 36px; }
+      .project-grid { grid-template-columns: 1fr; }
+
+      .hero-meta-row { flex-direction: column; gap: 10px; align-items: flex-start; }
+      .hero-bottom-row { flex-direction: column; gap: 32px; align-items: flex-start; }
+
+      .hero-bird-watermark { width: 80%; right: -10%; top: 10%; opacity: 0.028; }
+    }
+
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      .hero-name { font-size: clamp(72px, 20vw, 96px); }
+      footer { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav id="main-nav">
+  <a href="#hero" class="nav-brand">
+    <div class="nav-monogram">MT</div>
+    <div class="nav-wordmark">
+      Minh Tran
+      <span>Field Notes</span>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about">Profile</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section id="hero">
+
+  <!-- Firefly canvas -->
+  <canvas id="fireflies"></canvas>
+
+  <!-- Soaring bird silhouette watermark -->
+  <div class="hero-bird-watermark">
+    <svg viewBox="0 0 800 380" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+      <!-- Main body -->
+      <ellipse cx="400" cy="195" rx="18" ry="72" transform="rotate(-5 400 195)"/>
+      <!-- Right wing — upper surface -->
+      <path d="M408,188 C450,170 510,145 580,128 C650,111 720,108 780,118
+               C730,112 670,118 600,138 C530,158 470,175 415,192 Z"/>
+      <!-- Right wing — lower surface / depth -->
+      <path d="M412,195 C455,185 520,172 595,162 C660,153 720,152 780,158
+               C730,148 668,148 598,158 C525,168 462,182 415,196 Z"
+            opacity="0.6"/>
+      <!-- Left wing — upper surface -->
+      <path d="M392,188 C350,170 290,145 220,128 C150,111 80,108 20,118
+               C70,112 130,118 200,138 C270,158 330,175 385,192 Z"/>
+      <!-- Left wing — lower surface -->
+      <path d="M388,195 C345,185 280,172 205,162 C140,153 80,152 20,158
+               C70,148 132,148 202,158 C275,168 338,182 385,196 Z"
+            opacity="0.6"/>
+      <!-- Tail feathers -->
+      <path d="M395,260 C388,280 382,296 378,310 C383,300 390,285 398,268 Z"/>
+      <path d="M400,262 C400,285 400,302 400,316 C400,302 400,285 400,262 Z"/>
+      <path d="M405,260 C412,280 418,296 422,310 C417,300 410,285 402,268 Z"/>
+      <!-- Head -->
+      <ellipse cx="401" cy="132" rx="11" ry="14" transform="rotate(-8 401 132)"/>
+      <!-- Beak -->
+      <path d="M407,126 C418,122 426,120 428,122 C424,124 416,126 407,128 Z"/>
+    </svg>
+  </div>
+
+  <div class="hero-meta-row">
+    <span class="hero-meta-item">Vol. I — 2026</span>
+    <span class="hero-meta-item accent">Field Dispatch No. 001</span>
+    <span class="hero-meta-item">29.6516° N, 82.3248° W</span>
+    <div class="recording-indicator">
+      <div class="rec-dot"></div>
+      Live from the Field
+    </div>
+  </div>
+
+  <h1 class="hero-name">
+    MINH<br>
+    <span class="line2">TRAN</span>
+  </h1>
+
+  <div class="hero-yellow-bar"></div>
+
+  <div class="hero-bottom-row">
+    <div class="hero-disciplines">
+      <span class="hero-discipline">Computer Scientist</span>
+      <span class="hero-discipline">ML Researcher</span>
+      <span class="hero-discipline">iOS Developer</span>
+      <span class="hero-discipline">University of Florida · Class of 2028</span>
+    </div>
+    <div class="hero-location">
+      <span>Gainesville, Florida</span>
+      <span style="color: rgba(242,237,227,0.25);">──</span>
+      <span>Open to Summer 2026 Internships</span>
+    </div>
+    <div class="hero-scroll-indicator" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">
+      <div class="scroll-line"></div>
+      <span class="scroll-label">Explore</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ABOUT ═══ -->
+<section id="about">
+  <div class="about-grid">
+
+    <!-- LEFT: NatGeo portrait -->
+    <div class="photo-frame reveal">
+      <div class="natgeo-portrait">
+        <img src="Portfolio.jpg" alt="Minh Tran">
+        <!-- Yellow rectangle frame — the NatGeo treatment -->
+        <div class="ng-frame-rect"></div>
+        <!-- Brand mark top-right -->
+        <div class="ng-brand">
+          <div class="ng-brand-square">MT</div>
+          <div class="ng-brand-text">
+            <span class="ng-brand-sub">Field</span>
+            <span class="ng-brand-main">Notes</span>
+          </div>
+        </div>
+        <!-- Coordinates at bottom -->
+        <div class="ng-coords">29.6516° N · 82.3248° W · Gainesville, FL</div>
+      </div>
+      <div class="photo-caption-block">
+        <span class="cap-label">Specimen Photograph</span>
+        <span class="cap-text">Minh Tran — CS researcher, iOS developer, and builder. Observed in the field, University of Florida, Gainesville. 2026.</span>
+      </div>
+    </div>
+
+    <!-- RIGHT: Content -->
+    <div class="about-content">
+
+      <div class="reveal">
+        <p class="eyebrow">Subject Profile</p>
+        <h2 class="section-heading">ABOUT<br>THE FIELD</h2>
+        <div class="yellow-rule"></div>
+      </div>
+
+      <div class="classification-card reveal reveal-delay-1">
+        <span class="specimen-ref">Specimen No. 001</span>
+        <div class="classif-row">
+          <span class="classif-key">Species</span>
+          <span class="classif-val">CS Sophomore — Builder, Researcher</span>
+        </div>
+        <div class="classif-row">
+          <span class="classif-key">Habitat</span>
+          <span class="classif-val">University of Florida, Gainesville — HWCOE</span>
+        </div>
+        <div class="classif-row">
+          <span class="classif-key">GPA</span>
+          <span class="classif-val">3.5 · Class of 2028</span>
+        </div>
+        <div class="classif-row">
+          <span class="classif-key">Behavior</span>
+          <span class="classif-val">Builds in the open. Ships to production. Nocturnal coder.</span>
+        </div>
+        <div class="classif-row">
+          <span class="classif-key">Status</span>
+          <span class="classif-val" style="color: var(--yellow);">Open to Summer 2026 SWE Internships</span>
+        </div>
+      </div>
+
+      <p class="about-body reveal reveal-delay-1">
+        I build things that work in the real world. From a production iOS app shipping live to beta users, to genomic ML pipelines running on HPC clusters — I'm drawn to problems where the code actually matters and gets used by real people.
+      </p>
+      <p class="about-body reveal reveal-delay-2" style="margin-bottom: 36px;">
+        I do machine learning research in UF's epidemiology lab studying antibiotic resistance in genomic data. I'm also the solo founder of Pod, a group trip planning app currently live on TestFlight. Outside of the screen: nature documentaries, photography, cooking.
+      </p>
+
+      <div class="skills-section reveal reveal-delay-2">
+        <p class="skills-label">Languages — collected in the field</p>
+        <div class="skill-tags">
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">TypeScript</span>
+          <span class="skill-tag">JavaScript</span>
+          <span class="skill-tag">Bash</span>
+        </div>
+
+        <p class="skills-label">Frameworks &amp; ML — field specimens</p>
+        <div class="skill-tags">
+          <span class="skill-tag">React Native</span>
+          <span class="skill-tag">Expo</span>
+          <span class="skill-tag">PyTorch</span>
+          <span class="skill-tag">scikit-learn</span>
+          <span class="skill-tag">Pandas</span>
+        </div>
+
+        <p class="skills-label">Infrastructure — native terrain</p>
+        <div class="skill-tags">
+          <span class="skill-tag">Firebase</span>
+          <span class="skill-tag">GCP</span>
+          <span class="skill-tag">HiPerGator HPC</span>
+          <span class="skill-tag">Linux</span>
+          <span class="skill-tag">Git</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ EXPERIENCE ═══ -->
+<section id="experience">
+  <div class="exp-wrap">
+
+    <div class="reveal" style="margin-bottom: 64px;">
+      <p class="eyebrow">Professional Record</p>
+      <h2 class="section-heading">FIELD<br>LOG</h2>
+      <div class="yellow-rule"></div>
+    </div>
+
+    <div class="exp-entry reveal">
+      <div class="exp-num">01</div>
+      <div class="exp-body">
+        <h3 class="exp-role">Founder &amp; Solo Developer</h3>
+        <p class="exp-org">Pod · iOS App · podplananything.com</p>
+        <p class="exp-desc">Built and launched Pod entirely solo — a real-time group event planning iOS app. Shipped live GPS location tracking, group trip coordination, broadcast push notifications, RSVP flows, and Firebase-backed auth. Navigated the full App Store submission process. Currently in beta on TestFlight with active users.</p>
+      </div>
+      <div class="exp-aside">
+        <p class="exp-observed">Observed:</p>
+        <p class="exp-period">Dec 2025 — Present</p>
+        <div class="exp-pills">
+          <span class="exp-pill">React Native</span>
+          <span class="exp-pill">TypeScript</span>
+          <span class="exp-pill">Firebase</span>
+          <span class="exp-pill">iOS</span>
+          <span class="exp-pill">Expo</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="exp-entry reveal">
+      <div class="exp-num">02</div>
+      <div class="exp-body">
+        <h3 class="exp-role">ML &amp; Genomics Researcher</h3>
+        <p class="exp-org">Epi-Logic Lab · University of Florida</p>
+        <p class="exp-desc">Engineered scalable Python pipelines to process medical genomic data at scale on UF's HiPerGator HPC cluster. Built k-mer feature extraction systems and constructed ML datasets for antibiotic resistance prediction using logistic regression and random forest models on large genomic sequence datasets.</p>
+      </div>
+      <div class="exp-aside">
+        <p class="exp-observed">Observed:</p>
+        <p class="exp-period">Oct 2025 — Present</p>
+        <div class="exp-pills">
+          <span class="exp-pill">Python</span>
+          <span class="exp-pill">PyTorch</span>
+          <span class="exp-pill">scikit-learn</span>
+          <span class="exp-pill">HPC</span>
+          <span class="exp-pill">Pandas</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="exp-entry reveal">
+      <div class="exp-num">03</div>
+      <div class="exp-body">
+        <h3 class="exp-role">SWE Automation Intern</h3>
+        <p class="exp-org">University of Florida</p>
+        <p class="exp-desc">Developed end-to-end automation pipelines that reduced manual data entry by 98%. Built a multi-layer survey system for the UF-Kyoto study abroad exchange program using Python, Google Apps Script, and Gmail API. Focused on resilient error handling and scalable infrastructure.</p>
+      </div>
+      <div class="exp-aside">
+        <p class="exp-observed">Observed:</p>
+        <p class="exp-period">March 2025 — Present</p>
+        <div class="exp-pills">
+          <span class="exp-pill">Python</span>
+          <span class="exp-pill">Apps Script</span>
+          <span class="exp-pill">Gmail API</span>
+          <span class="exp-pill">Qualtrics</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ PROJECTS ═══ -->
+<section id="projects">
+  <div class="projects-wrap">
+
+    <div class="reveal" style="margin-bottom: 64px;">
+      <p class="eyebrow">Field Dispatches</p>
+      <h2 class="section-heading">SELECTED<br>WORK</h2>
+      <div class="yellow-rule"></div>
+    </div>
+
+    <div class="project-featured reveal">
+      <div class="project-photo" style="margin-bottom:0;">
+        <div class="project-photo-box" style="aspect-ratio: 5/3;">
+          <img src="pod.png" alt="Pod">
+        </div>
+      </div>
+      <div>
+        <p class="dispatch-tag">Dispatch 01 · Featured Project</p>
+        <h3 class="project-title">Pod</h3>
+        <p class="project-cat">Fullstack iOS App Development</p>
+        <p class="project-desc">A real-time group planning and coordination iOS app. Live location tracking, RSVP stops, push notifications, broadcasting, custom events. Plan anything, go anywhere. Live on TestFlight with real beta users.</p>
+        <div class="project-tech">
+          <span class="tech-tag">React Native</span>
+          <span class="tech-tag">TypeScript</span>
+          <span class="tech-tag">Expo</span>
+          <span class="tech-tag">Firebase</span>
+          <span class="tech-tag">iOS</span>
+          <span class="tech-tag">GCP</span>
+        </div>
+        <a href="https://podplananything.com" target="_blank" class="project-link">View Live Site →</a>
+      </div>
+    </div>
+
+    <div class="project-grid">
+
+      <div class="project-card reveal">
+        <p class="dispatch-tag">Dispatch 02</p>
+        <div class="project-photo">
+          <div class="project-photo-box">
+            <img src="microbe.png" alt="ML Model">
+          </div>
+        </div>
+        <h3 class="project-title">Antibiotic Resistance Predictor</h3>
+        <p class="project-cat">Bioinformatics &amp; Machine Learning</p>
+        <p class="project-desc">ML model predicting dominant future microbe lineages using genomic sequence data. K-mer feature extraction and anomalous mutation detection for antimicrobial resistance prediction. Runs on UF's HiPerGator HPC cluster.</p>
+        <div class="project-tech">
+          <span class="tech-tag">Python</span>
+          <span class="tech-tag">PyTorch</span>
+          <span class="tech-tag">scikit-learn</span>
+          <span class="tech-tag">HiPerGator</span>
+          <span class="tech-tag">Pandas</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <p class="dispatch-tag">Dispatch 03</p>
+        <div class="project-photo">
+          <div class="project-photo-box">
+            <img src="japan.jpg" alt="Pipeline">
+          </div>
+        </div>
+        <h3 class="project-title">UF Study Abroad Pipeline</h3>
+        <p class="project-cat">Automation Systems Engineering</p>
+        <p class="project-desc">Multi-layer automated application system for the UF-Kyoto student exchange program. Reduced manual labor by 98% using Python, Google Apps Script, Gmail API, and Qualtrics — serving real university operations.</p>
+        <div class="project-tech">
+          <span class="tech-tag">Python</span>
+          <span class="tech-tag">Apps Script</span>
+          <span class="tech-tag">Gmail API</span>
+          <span class="tech-tag">Qualtrics</span>
+          <span class="tech-tag">Linux</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <p class="dispatch-tag">Dispatch 04</p>
+        <div class="project-photo">
+          <div class="project-photo-box">
+            <img src="nasawebsite.png" alt="NASA Site">
+          </div>
+        </div>
+        <h3 class="project-title">NASA Artemis II Mission Site</h3>
+        <p class="project-cat">UX / Front-End Development</p>
+        <p class="project-desc">Cinematic single-page mission website with a live countdown timer, animated starfield, real NASA photography, crew profiles for all four astronauts, and a full mission timeline. Deployed to Vercel.</p>
+        <div class="project-tech">
+          <span class="tech-tag">HTML/CSS</span>
+          <span class="tech-tag">JavaScript</span>
+          <span class="tech-tag">Vercel</span>
+        </div>
+        <a href="https://nasaartemis.vercel.app" target="_blank" class="project-link">View Live Site →</a>
+      </div>
+
+      <div class="project-card reveal" style="border-style: dashed; opacity: 0.4;">
+        <p class="dispatch-tag">Dispatch 05</p>
+        <div class="project-photo">
+          <div class="project-photo-box" style="border-style: dashed;">
+            <span class="photo-slot-label">Next Project</span>
+          </div>
+        </div>
+        <h3 class="project-title" style="color: var(--muted);">Coming Soon</h3>
+        <p class="project-cat">In the Field</p>
+        <p class="project-desc" style="font-style: italic;">Currently in development. Check back soon.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CONTACT ═══ -->
+<section id="contact">
+  <div class="contact-inner reveal">
+    <p class="eyebrow">Base Camp</p>
+    <h2 class="contact-headline">
+      LET'S<br>
+      <span class="outline">TALK.</span>
+    </h2>
+    <p class="contact-body">
+      Looking for a Summer 2026 SWE internship. Drawn to places where people care deeply about what they build and why — Anthropic, Google, and similar. If that sounds like where you work, I'd love to connect.
+    </p>
+    <div class="contact-ctas">
+      <a href="mailto:minhtran60524@gmail.com" class="cta-primary">✉ minhtran60524@gmail.com</a>
+      <a href="https://www.linkedin.com/in/minhtran605/" target="_blank" class="cta-secondary">LinkedIn</a>
+      <a href="https://podplananything.com" target="_blank" class="cta-secondary">Pod App</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <span class="footer-copy">© 2026 Minh Tran · Field Notes</span>
+  <ul class="footer-links">
+    <li><a href="mailto:minhtran60524@gmail.com">Email</a></li>
+    <li><a href="https://www.linkedin.com/in/minhtran605/" target="_blank">LinkedIn</a></li>
+    <li><a href="https://podplananything.com" target="_blank">Pod</a></li>
+  </ul>
+</footer>
+
+<script>
+  // ── Nav scroll ──
+  const nav = document.getElementById('main-nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  }, { passive: true });
+
+  // ── Scroll reveal ──
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -48px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  // ── Firefly animation ──
+  const canvas = document.getElementById('fireflies');
+  const ctx = canvas.getContext('2d');
+
+  function resizeCanvas() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas, { passive: true });
+
+  const NUM_FLIES = 38;
+  const flies = Array.from({ length: NUM_FLIES }, () => ({
+    x: Math.random(),      // normalized 0-1
+    y: Math.random(),
+    vx: (Math.random() - 0.5) * 0.00018,
+    vy: (Math.random() - 0.5) * 0.00018,
+    phase: Math.random() * Math.PI * 2,
+    speed: 0.004 + Math.random() * 0.005,
+    size: 0.8 + Math.random() * 1.6,
+    brightness: 0.3 + Math.random() * 0.5,
+  }));
+
+  function drawFireflies(ts) {
+    const W = canvas.width;
+    const H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    flies.forEach(f => {
+      // Drift
+      f.x += f.vx;
+      f.y += f.vy;
+
+      // Gentle sine drift
+      f.x += Math.sin(ts * 0.0003 + f.phase) * 0.00006;
+      f.y += Math.cos(ts * 0.00025 + f.phase * 1.3) * 0.00005;
+
+      // Wrap
+      if (f.x < 0) f.x = 1;
+      if (f.x > 1) f.x = 0;
+      if (f.y < 0) f.y = 1;
+      if (f.y > 1) f.y = 0;
+
+      const px = f.x * W;
+      const py = f.y * H;
+      const alpha = (Math.sin(ts * f.speed + f.phase) * 0.5 + 0.5) * f.brightness;
+
+      if (alpha < 0.02) return;
+
+      // Outer glow
+      const glowR = f.size * 9;
+      const glow = ctx.createRadialGradient(px, py, 0, px, py, glowR);
+      glow.addColorStop(0, `rgba(255, 210, 60, ${alpha * 0.55})`);
+      glow.addColorStop(0.4, `rgba(255, 195, 30, ${alpha * 0.18})`);
+      glow.addColorStop(1, `rgba(255, 180, 0, 0)`);
+      ctx.beginPath();
+      ctx.arc(px, py, glowR, 0, Math.PI * 2);
+      ctx.fillStyle = glow;
+      ctx.fill();
+
+      // Core dot
+      ctx.beginPath();
+      ctx.arc(px, py, f.size * 0.6, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 240, 140, ${alpha})`;
+      ctx.fill();
+    });
+
+    requestAnimationFrame(drawFireflies);
+  }
+
+  requestAnimationFrame(drawFireflies);
+</script>
+
+</body>
 </html>
