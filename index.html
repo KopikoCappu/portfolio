@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Share+Tech+Mono&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="icon" href="headshot.png" type="image/x-icon">
+  <link rel="preload" as="image" href="earth.webp">
+  <link rel="preload" as="image" href="floatingastronaut.webp">
 
   <style>
     /* ═══════════════════════════════════════════════════
@@ -101,7 +103,7 @@
     }
     .hero-earth {
       position:absolute;inset:0;z-index:1;
-      background:url('earth.png') center center/cover no-repeat,#000;
+      background:url('earth.webp') center center/cover no-repeat,#000;
     }
     .hero-earth::after {
       content:'';position:absolute;inset:0;
@@ -667,7 +669,7 @@
   </div>
 
   <div class="astronaut-wrap" id="astronaut">
-    <img src="floatingastronaut.png" alt="Astronaut floating in space" draggable="false"/>
+    <img src="floatingastronaut.webp" alt="Astronaut floating in space" draggable="false"/>
   </div>
 
   <div class="transmission-wrap" id="transmission-wrap">
