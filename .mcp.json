@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "graphmem": {
-      "type": "http",
-      "url": "http://localhost:47821",
-      "description": "GraphMem codebase memory. Query before touching any files."
-    }
-  }
-}
