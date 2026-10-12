@@ -16,14 +16,14 @@
 <script defer src="/_vercel/insights/script.js"></script>
 <style>
   :root {
-    --bg: #0d0c0b;
-    --panel: #1d1f24;
-    --ink: #f2eee6;
-    --dim: #d2ccc0;
-    --dim-2: #b0a99c;
-    --line: #2a2724;
-    --amber: #ffb547;
-    --note: #b9c9ff;
+    --bg: #0f1211;
+    --panel: #1c2a24;
+    --ink: #ece4d4;
+    --dim: #c9c2b2;
+    --dim-2: #a29c8e;
+    --line: #26332d;
+    --amber: #cfae84;
+    --note: #9fcab9;
     --pad: clamp(16px, 3vw, 40px);
     --display: "Big Shoulders Display", Impact, "Arial Narrow", sans-serif;
     --hand: "Nanum Pen Script", "Bradley Hand", cursive;
@@ -68,7 +68,7 @@
   .frame-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--focus, 50% 50%); z-index: -2; }
   .frame::after {
     content: ""; position: absolute; inset: 0; z-index: -1;
-    background: linear-gradient(180deg, rgba(0,0,0,.4), rgba(0,0,0,0) 24%, rgba(0,0,0,0) 70%, rgba(13,12,11,.7) 100%);
+    background: linear-gradient(180deg, rgba(0,0,0,.4), rgba(0,0,0,0) 24%, rgba(0,0,0,0) 70%, rgba(15,18,17,.7) 100%);
   }
   .frame-row { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 15px; font-weight: 500; color: #f4efe6; font-variant-numeric: tabular-nums; text-shadow: 0 1px 2px rgba(0,0,0,.7), 0 2px 14px rgba(0,0,0,.55); }
   .title-card { display: flex; flex-direction: column; align-items: center; gap: 4px; }
@@ -96,7 +96,7 @@
   .count { font-size: 15px; color: var(--dim); font-variant-numeric: tabular-nums; min-width: 7.5em; text-align: right; }
   .arrow {
     width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
-    border: 1px solid #4a4740; background: #16150f; color: var(--ink);
+    border: 1px solid #34443c; background: #141b18; color: var(--ink);
   }
   .arrow.next { background: var(--amber); border-color: var(--amber); color: var(--bg); }
   .arrow svg { width: 22px; height: 22px; }
@@ -141,7 +141,7 @@
   }
   .strip button {
     all: unset; box-sizing: border-box; cursor: pointer; min-height: 52px; padding: 10px 14px;
-    border-top: 3px solid #3a3732; display: flex; flex-direction: column; gap: 2px; transition: border-color .3s;
+    border-top: 3px solid #2c3a33; display: flex; flex-direction: column; gap: 2px; transition: border-color .3s;
   }
   .strip button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
   .strip .n { font-size: 13px; color: var(--dim-2); }
