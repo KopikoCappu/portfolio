@@ -310,7 +310,7 @@
 
         <article class="slide" aria-roledescription="slide" aria-label="1 of 5: Mocean">
           <div class="media">
-            <video muted loop playsinline preload="auto" poster="mocean.png"><source src="mocean.mp4" type="video/mp4"></video>
+            <video muted loop playsinline preload="none" poster="mocean.webp"><source src="mocean.mp4" type="video/mp4"></video>
           </div>
           <div class="slide-head">
             <h3>Mocean</h3>
@@ -325,7 +325,7 @@
 
         <article class="slide" aria-roledescription="slide" aria-label="2 of 5: Mycelium">
           <div class="media">
-            <video muted loop playsinline preload="metadata" poster="mycelium.png"><source src="mycelium-demo.mp4" type="video/mp4"></video>
+            <video muted loop playsinline preload="none" poster="mycelium.png"><!-- <source src="mycelium-demo.mp4" type="video/mp4"> --></video>
           </div>
           <div class="slide-head">
             <h3>Mycelium</h3>
@@ -340,7 +340,7 @@
 
         <article class="slide" aria-roledescription="slide" aria-label="3 of 5: Pod">
           <div class="media">
-            <video muted loop playsinline preload="metadata" poster="pod.webp"><source src="pod-demo.mp4" type="video/mp4"></video>
+            <video muted loop playsinline preload="none" poster="pod.webp"><!-- <source src="pod-demo.mp4" type="video/mp4"> --></video>
           </div>
           <div class="slide-head">
             <h3>Pod</h3>
@@ -355,7 +355,7 @@
 
         <article class="slide" aria-roledescription="slide" aria-label="4 of 5: Antibiotic resistance predictor">
           <div class="media">
-            <video muted loop playsinline preload="metadata" poster="microbe.webp"><source src="resistance-viz.mp4" type="video/mp4"></video>
+            <video muted loop playsinline preload="none" poster="microbe.webp"><!-- <source src="resistance-viz.mp4" type="video/mp4"> --></video>
           </div>
           <div class="slide-head">
             <h3>Resistance predictor</h3>
@@ -370,7 +370,7 @@
 
         <article class="slide" aria-roledescription="slide" aria-label="5 of 5: Kyoto exchange pipeline">
           <div class="media">
-            <video muted loop playsinline preload="metadata" poster="japan.webp"><source src="kyoto-pipeline.mp4" type="video/mp4"></video>
+            <video muted loop playsinline preload="none" poster="japan.webp"><!-- <source src="kyoto-pipeline.mp4" type="video/mp4"> --></video>
           </div>
           <div class="slide-head">
             <h3>Kyoto pipeline</h3>
@@ -537,12 +537,21 @@
       s.classList.toggle('is-side', Math.abs(r) === 1);
     });
   }
+  // Videos load nothing until the reel is close to the screen. Then the centered one
+  // loads fully and its neighbors load just enough to start the moment they're swiped to.
+  let near = false;
+  const rank = { none: 0, metadata: 1, auto: 2 };
+  function warm(v, level) {
+    if (!v || !v.querySelector('source') || rank[v.preload] >= rank[level]) return;
+    v.preload = level;
+    if (v.readyState === 0) v.load();
+  }
   function syncVideos() {
     slides.forEach((s, i) => {
       const v = s.querySelector('video');
       if (!v) return;
+      if (near && !reduce) warm(v, i === cur ? 'auto' : Math.abs(relOf(i)) === 1 ? 'metadata' : 'none');
       if (i === cur && onScreen && !reduce) {
-        v.preload = 'auto';
         const p = v.play(); if (p && p.catch) p.catch(() => {});
       } else v.pause();
     });
@@ -619,6 +628,12 @@
 
   // Only play the active video while the reel is on screen.
   new IntersectionObserver(es => { onScreen = es[0].isIntersecting; syncVideos(); }, { threshold: 0.25 }).observe(viewport);
+  // Wait for the page's own load first, so videos never compete with the hero.
+  // Scrolling to the reel before then still plays the video, since play() loads it.
+  const watchNear = () => new IntersectionObserver(es => {
+    if (es[0].isIntersecting && !near) { near = true; syncVideos(); }
+  }, { rootMargin: '50% 0px' }).observe(viewport);
+  if (document.readyState === 'complete') watchNear(); else addEventListener('load', watchNear, { once: true });
   document.addEventListener('visibilitychange', () => { if (document.hidden) slides.forEach(s => { const v = s.querySelector('video'); if (v) v.pause(); }); else syncVideos(); });
 
   addEventListener('resize', () => place(), { passive: true });
