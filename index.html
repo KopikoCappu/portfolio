@@ -228,6 +228,28 @@
     html { scroll-behavior: auto; }
     .slide, .media, .credits > div { transition: none; }
   }
+
+    /* ---------- sizing tweaks: bigger name, one-screen sections on phones ---------- */
+  .name-wrap { width: min(70vw, 900px); }
+  @media (max-width: 560px) {
+    .name-wrap { width: 94vw; }
+    .reel { min-height: 100vh; min-height: 100svh; padding: 24px 0 18px; }
+    .reel-head { flex-wrap: nowrap; align-items: center; margin-bottom: 14px; }
+    .reel-head .hand, .count { display: none; }
+    .reel-head h2.section { font-size: 30px; }
+    .slide { row-gap: 8px; }
+    .media { margin-bottom: 4px; }
+    .slide h3 { font-size: clamp(40px, 12vw, 54px); }
+    .slide-head { gap: 6px; }
+    .slide-head .hand { font-size: 24px; }
+    .credits > div { font-size: 15px; line-height: 1.45; }
+    .credits > div:first-child .label { display: none; }
+    .credits > div:nth-child(n+2) .label, .credits > div:nth-child(n+2) p { display: inline; font-size: 15px; }
+    .credits > div:nth-child(n+2) .label { margin-right: 6px; }
+    .strip { grid-template-columns: repeat(5, minmax(0, 1fr)); overflow: visible; margin-top: 14px; gap: 6px; padding-bottom: 0; }
+    .strip button { min-height: 0; padding: 0; height: 14px; }
+    .strip .n, .strip .t { display: none; }
+  }
 </style>
 </head>
 <body>
@@ -251,7 +273,7 @@
     <div class="title-card">
       <h1 class="sr-only">Minh Tran</h1>
       <div class="name-wrap">
-        <canvas class="name" data-boil="boil.json" aria-label="Minh Tran, handwritten"></canvas>
+        <canvas class="name" data-boil="boil.json" data-boil-fit="content" aria-label="Minh Tran, handwritten"></canvas>
         <p class="name-note hand" aria-hidden="true">
           <svg width="46" height="30" viewBox="0 0 46 30"><path d="M42 6 C 30 4, 16 10, 6 24 M6 24 L 8 13 M6 24 L 17 21" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
           <span>drawn frame<br>by frame</span>
