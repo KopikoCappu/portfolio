@@ -326,6 +326,21 @@
           </div>
         </article>
 
+                <article class="slide" aria-roledescription="slide" aria-label="3 of 5: Pod">
+          <div class="media">
+            <video muted loop playsinline preload="none" poster="pod.webp"><!-- <source src="pod-demo.mp4" type="video/mp4"> --></video>
+          </div>
+          <div class="slide-head">
+            <h3>Pod</h3>
+            <p class="hand">300+ downloads</p>
+          </div>
+          <div class="credits">
+            <div><p class="label">What it is</p><p>Group planning with live location sharing, RSVPs, and schedules. Built solo, live on the App Store, updated over the air.</p></div>
+            <div><p class="label">Built with</p><p>React Native, TypeScript, Expo, Firebase, GCP</p></div>
+            <div><p class="label">Where to see it</p><p><a href="https://podplananything.com" target="_blank" rel="noopener">podplananything.com</a></p></div>
+          </div>
+        </article>
+
         <article class="slide" aria-roledescription="slide" aria-label="2 of 5: Mycelium">
           <div class="media">
             <video muted loop playsinline preload="none" poster="mycelium.png"><!-- <source src="mycelium-demo.mp4" type="video/mp4"> --></video>
@@ -341,20 +356,7 @@
           </div>
         </article>
 
-        <article class="slide" aria-roledescription="slide" aria-label="3 of 5: Pod">
-          <div class="media">
-            <video muted loop playsinline preload="none" poster="pod.webp"><!-- <source src="pod-demo.mp4" type="video/mp4"> --></video>
-          </div>
-          <div class="slide-head">
-            <h3>Pod</h3>
-            <p class="hand">survived 4 rounds of App Store review</p>
-          </div>
-          <div class="credits">
-            <div><p class="label">What it is</p><p>Group planning with live location sharing, RSVPs, and push broadcasts. Built solo, live on the App Store, updated over the air.</p></div>
-            <div><p class="label">Built with</p><p>React Native, TypeScript, Expo, Firebase, GCP</p></div>
-            <div><p class="label">Where to see it</p><p><a href="https://podplananything.com" target="_blank" rel="noopener">podplananything.com</a></p></div>
-          </div>
-        </article>
+
 
         <article class="slide" aria-roledescription="slide" aria-label="4 of 5: Antibiotic resistance predictor">
           <div class="media">
@@ -552,7 +554,8 @@
   function syncVideos() {
     slides.forEach((s, i) => {
       const v = s.querySelector('video');
-      if (!v) return;
+      // Poster-only slides never get play(): mobile Safari blanks the poster when it's called.
+      if (!v || !v.querySelector('source')) return;
       if (near && !reduce) warm(v, i === cur ? 'auto' : Math.abs(relOf(i)) === 1 ? 'metadata' : 'none');
       if (i === cur && onScreen && !reduce) {
         const p = v.play(); if (p && p.catch) p.catch(() => {});
