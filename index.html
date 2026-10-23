@@ -6,10 +6,11 @@
 <title>Minh Tran</title>
 <meta name="description" content="Minh Tran, computer science student at the University of Florida. Apps, ML research, and developer tools.">
 <link rel="icon" href="headshot.webp">
-<link rel="preload" as="image" href="background.webp" type="image/webp">
+<link rel="preload" href="boil.json" as="fetch" crossorigin fetchpriority="high">
+<script src="boil-player.js" defer fetchpriority="high"></script>
+<link rel="preload" as="image" href="background.gif">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" href="boil.json" as="fetch" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Hanken+Grotesk:wght@400;500;600&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
 <!-- Vercel Web Analytics: the script is served by Vercel once Analytics is enabled for the project -->
 <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
@@ -268,7 +269,7 @@
     </ul>
   </nav>
   <div class="frame">
-    <img class="frame-bg" src="background.webp" alt="">
+    <img class="frame-bg" src="background.gif" alt="">
     <div class="frame-row" aria-hidden="true">
       <span>Gainesville, Florida</span>
       <span id="timecode">00:00:00:00</span>
@@ -499,7 +500,6 @@
 
 <footer>© 2026 Minh Tran. Name drawn by hand, frame by frame.</footer>
 
-<script src="boil-player.js" defer></script>
 <script>
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
