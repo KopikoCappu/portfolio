@@ -6,7 +6,7 @@
 <title>Minh Tran</title>
 <meta name="description" content="Minh Tran, computer science student at the University of Florida. Apps, ML research, and developer tools.">
 <link rel="icon" href="headshot.webp">
-<link rel="preload" as="image" href="background.gif">
+<link rel="preload" as="image" href="background.webp" type="image/webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="boil.json" as="fetch" crossorigin>
@@ -268,7 +268,7 @@
     </ul>
   </nav>
   <div class="frame">
-    <img class="frame-bg" src="background.gif" alt="">
+    <img class="frame-bg" src="background.webp" alt="">
     <div class="frame-row" aria-hidden="true">
       <span>Gainesville, Florida</span>
       <span id="timecode">00:00:00:00</span>
@@ -279,7 +279,7 @@
         <canvas class="name" data-boil="boil.json" data-boil-fit="content" aria-label="Minh Tran, handwritten"></canvas>
         <p class="name-note hand" aria-hidden="true">
           <svg width="46" height="30" viewBox="0 0 46 30"><path d="M42 6 C 30 4, 16 10, 6 24 M6 24 L 8 13 M6 24 L 17 21" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
-          <span>drawn frame<br>by frame</span>
+          <span>hand drawn using custom built <br> open source animation program</span>
         </p>
       </div>
     </div>
@@ -322,39 +322,41 @@
           <div class="credits">
             <div><p class="label">What it is</p><p>A frame-by-frame animation app in the browser, with onion skinning, layers, pressure brushes, and GIF or video rotoscoping. It exports straight to the web. Named for motion and the ocean: I built it to animate over a sea otter.</p></div>
             <div><p class="label">Built with</p><p>JavaScript, Canvas API, Pointer Events</p></div>
-            <div><p class="label">Where to see it</p><p>Coming soon</p></div>
+            <div><p class="label">Where to see it</p><p><a href="https://mocean-frames.pages.dev/" target="_blank" rel="noopener">mocean-frames.pages.dev</a></p></div>
           </div>
         </article>
 
-        <article class="slide" aria-roledescription="slide" aria-label="2 of 5: Pod">
+                <article class="slide" aria-roledescription="slide" aria-label="3 of 5: Pod">
           <div class="media">
             <video muted loop playsinline preload="none" poster="pod.webp"><!-- <source src="pod-demo.mp4" type="video/mp4"> --></video>
           </div>
           <div class="slide-head">
             <h3>Pod</h3>
-            <p class="hand">300+ users</p>
+            <p class="hand">300+ downloads</p>
           </div>
           <div class="credits">
-            <div><p class="label">What it is</p><p>Group planning with live location sharing, RSVPs, and schedules. The map clusters friends as you zoom and predicts where they are between GPS updates. Built solo, live on the App Store.</p></div>
-            <div><p class="label">Built with</p><p>React Native, TypeScript, Expo, Firebase Cloud Functions</p></div>
+            <div><p class="label">What it is</p><p>Group planning with live location sharing, RSVPs, and schedules. Built solo, live on the App Store, updated over the air.</p></div>
+            <div><p class="label">Built with</p><p>React Native, TypeScript, Expo, Firebase, GCP</p></div>
             <div><p class="label">Where to see it</p><p><a href="https://podplananything.com" target="_blank" rel="noopener">podplananything.com</a></p></div>
           </div>
         </article>
 
-        <article class="slide" aria-roledescription="slide" aria-label="3 of 5: Mycelium">
+        <article class="slide" aria-roledescription="slide" aria-label="2 of 5: Mycelium">
           <div class="media">
             <video muted loop playsinline preload="none" poster="mycelium.png"><!-- <source src="mycelium-demo.mp4" type="video/mp4"> --></video>
           </div>
           <div class="slide-head">
             <h3>Mycelium</h3>
-            <p class="hand">1,800+ weekly npm downloads</p>
+            <p class="hand">free and open source</p>
           </div>
           <div class="credits">
-            <div><p class="label">What it is</p><p>An open source MCP server that gives AI coding agents a persistent, searchable memory of any repo, cutting the files an agent reads per task about 10x. It also draws the codebase as a dependency graph people can read.</p></div>
-            <div><p class="label">Built with</p><p>TypeScript, MCP, Tree-sitter, Claude API, D3.js</p></div>
+            <div><p class="label">What it is</p><p>A CLI that gives AI coding agents a persistent, searchable memory of any repo, so each task burns fewer tokens. It also draws the codebase as a dependency graph people can read.</p></div>
+            <div><p class="label">Built with</p><p>TypeScript, Claude API, MCP, D3.js, Node.js</p></div>
             <div><p class="label">Where to see it</p><p><a href="https://www.getmycelium.net/" target="_blank" rel="noopener">getmycelium.net</a></p></div>
           </div>
         </article>
+
+
 
         <article class="slide" aria-roledescription="slide" aria-label="4 of 5: Antibiotic resistance predictor">
           <div class="media">
@@ -365,8 +367,8 @@
             <p class="hand">runs on UF's supercomputer</p>
           </div>
           <div class="credits">
-            <div><p class="label">What it is</p><p>Predicts whether a bacterial genome is resistant, intermediate, or susceptible to an antibiotic. Trained on k-mer features from 29,000+ genomes, with a separate classifier for each of 13 antibiotics.</p></div>
-            <div><p class="label">Built with</p><p>Python, scikit-learn, SLURM, HiPerGator</p></div>
+            <div><p class="label">What it is</p><p>Predicts whether a bacterial genome is resistant, intermediate, or susceptible to an antibiotic, from k-mer features with logistic regression and random forests.</p></div>
+            <div><p class="label">Built with</p><p>Python, scikit-learn, PyTorch, HiPerGator</p></div>
             <div><p class="label">Where to see it</p><p>Research at UF's Epi-Logic Lab</p></div>
           </div>
         </article>
@@ -377,11 +379,11 @@
           </div>
           <div class="slide-head">
             <h3>Kyoto pipeline</h3>
-            <p class="hand">8 hours a week down to 10 minutes</p>
+            <p class="hand">98% less manual data entry</p>
           </div>
           <div class="credits">
-            <div><p class="label">What it is</p><p>The application, routing, and email automation behind UF's Kyoto study abroad exchange: 500+ submissions pulled in automatically, a live dashboard for advisors, and approval PDFs generated on their own.</p></div>
-            <div><p class="label">Built with</p><p>Python, JavaScript, Google Apps Script, SQL, Qualtrics and Gmail APIs</p></div>
+            <div><p class="label">What it is</p><p>The application, routing, and email automation behind UF's Kyoto study abroad exchange, replacing hundreds of hours of manual work each cycle.</p></div>
+            <div><p class="label">Built with</p><p>Python, Google Apps Script, Gmail API, Qualtrics</p></div>
             <div><p class="label">Where to see it</p><p>Internal tool for UF</p></div>
           </div>
         </article>
@@ -405,14 +407,13 @@
         <div class="about-copy">
           <p>I'm Minh, a computer science student at the University of Florida, graduating December 2027.</p>
           <p>Most of my projects start the same way: I notice something that should exist, then I build it and ship it. That's how Pod, Mycelium, and Mocean happened.</p>
-          <p>Away from the keyboard, I'm an ocean person. I keep reef and shrimp tanks, watch a lot of wildlife documentaries, and care about conservation. My favorite work is where tech and the natural world meet.</p>
+          <p>Away from the keyboard, I'm an ocean person. I watch a lot of wildlife documentaries and care about conservation. My favorite work is where tech and the natural world meet.</p>
         </div>
         <dl class="roll">
           <dt>Based in</dt><dd>Gainesville, Florida</dd>
-          <dt>Into</dt><dd>The ocean, marine biology, reef tanks, robotics</dd>
-          <dt>Languages</dt><dd>Python, TypeScript, JavaScript, C++, SQL, Bash</dd>
-          <dt>ML</dt><dd>PyTorch, scikit-learn, computer vision, SLURM, HiPerGator</dd>
-          <dt>Tools</dt><dd>React Native, Expo, Node.js, Firebase, MCP, D3.js, Docker, Linux</dd>
+          <dt>Into</dt><dd>The ocean, marine biology, machine learning, robotics</dd>
+          <dt>Languages</dt><dd>Python, TypeScript, JavaScript, Bash</dd>
+          <dt>Tools</dt><dd>React Native, Expo, PyTorch, scikit-learn, Firebase, GCP, HiPerGator</dd>
         </dl>
       </div>
       <div class="crew-photo">
@@ -434,7 +435,7 @@
           <div>
             <h3>Machine learning research intern</h3>
             <p class="where">ME2 Lab, UF Materials Science</p>
-            <p>Applying ML to electron microscopy. I'm replacing the lab's Gaussian fitting and thresholding with CNN and transformer object detection, so electron diffraction patterns can be read in real time, and training vision models that classify materials by their crystal structure. Before joining, I built an interactive 3D electron diffraction simulator that the lab's structure generation work now builds on.</p>
+            <p>Applying ML to electron microscopy: large-scale electron diffraction analysis, plus vision models that identify crystal structures and classify materials by their internal structure. I built an interactive 3D electron diffraction simulator to help the team see and understand patterns.</p>
           </div>
         </li>
         <li class="job">
@@ -442,7 +443,7 @@
           <div>
             <h3>Machine learning research assistant</h3>
             <p class="where">Epi-Logic Lab, University of Florida</p>
-            <p>Built the pipeline behind our antibiotic resistance work: 29,000+ genomes processed with SLURM jobs on UF's HiPerGator cluster, 13 per-antibiotic classifiers, and a data leakage bug I caught that had been overstating accuracy, fixed before publication.</p>
+            <p>Building Python pipelines that process clinical genomic data on UF's HiPerGator cluster, and the k-mer datasets and models behind our antibiotic resistance classification work.</p>
           </div>
         </li>
         <li class="job">
@@ -472,9 +473,9 @@
         <li class="job">
           <p class="when">Mar 2025 to now</p>
           <div>
-            <h3>Software engineering intern</h3>
+            <h3>Software automation engineer</h3>
             <p class="where">UF Computer and Information Science and Engineering</p>
-            <p>Built the survey, routing, and email automation behind the UF and Kyoto study abroad exchange, cutting weekly data processing from 8 hours to 10 minutes across 500+ student submissions.</p>
+            <p>Built the survey, routing, and email automation behind the UF and Kyoto study abroad exchange, cutting manual data entry by 98%.</p>
           </div>
         </li>
       </ol>
@@ -489,7 +490,6 @@
       <p class="hand" aria-hidden="true">I answer fast</p>
       <div class="links">
         <a href="https://www.linkedin.com/in/minhtran605/" target="_blank" rel="noopener">LinkedIn</a>
-        <a href="https://github.com/KopikoCappu" target="_blank" rel="noopener">GitHub</a>
         <a href="https://podplananything.com" target="_blank" rel="noopener">Pod</a>
         <a href="https://www.getmycelium.net/" target="_blank" rel="noopener">Mycelium</a>
       </div>
