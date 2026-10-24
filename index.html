@@ -6,7 +6,7 @@
 <title>Minh Tran</title>
 <meta name="description" content="Minh Tran, computer science student at the University of Florida. Apps, ML research, and developer tools.">
 <link rel="icon" href="headshot.webp">
-<link rel="preload" href="boil.json" as="fetch" crossorigin fetchpriority="high">
+<link rel="preload" href="project.json" as="fetch" crossorigin fetchpriority="high">
 <script src="boil-player.js" defer fetchpriority="high"></script>
 <link rel="preload" as="image" href="background.gif">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -76,6 +76,16 @@
   .title-card .by { margin: 0; font-size: 16px; color: #e4ded2; text-shadow: 0 1px 8px rgba(0,0,0,.6); }
   .name-wrap { position: relative; width: min(80vw, 1000px); }
   .name { display: block; width: 100%; filter: drop-shadow(0 2px 16px rgba(0,0,0,.35)); }
+  /* Corner text from the drawing (CS + Econ, UF 2027), pinned to the hero's corners.
+     Change these insets to move it: top, left/right, bottom. */
+  .boil-corners {
+    position: absolute; z-index: 0; pointer-events: none;
+    --corner-top: calc(116px + env(safe-area-inset-top, 0px));
+    --corner-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+    top: var(--corner-top); left: var(--pad);
+    width: calc(100% - 2 * var(--pad)); height: calc(100% - var(--corner-top) - var(--corner-bottom));
+    filter: drop-shadow(0 2px 16px rgba(0,0,0,.35));
+  }
   .name-note {
     position: absolute; right: -14%; top: 4%; margin: 0; display: flex; gap: 6px; align-items: flex-start;
     font-size: 30px; transform: rotate(4deg); white-space: nowrap; text-shadow: 0 1px 10px rgba(0,0,0,.5);
@@ -274,13 +284,12 @@
   <div class="frame">
     <img class="frame-bg" src="background.gif" alt="">
     <div class="frame-row" aria-hidden="true">
-      <span>Gainesville, Florida</span>
-      <span id="timecode">00:00:00:00</span>
+      <span></span>
     </div>
     <div class="title-card">
       <h1 class="sr-only">Minh Tran</h1>
       <div class="name-wrap">
-        <canvas class="name" data-boil="boil.json" data-boil-fit="content" aria-label="Minh Tran, handwritten"></canvas>
+        <canvas class="name" data-boil="project.json" data-boil-fit="content" data-boil-corners=".frame" aria-label="Minh Tran, handwritten"></canvas>
         <p class="name-note hand" aria-hidden="true">
           <svg width="46" height="30" viewBox="0 0 46 30"><path d="M42 6 C 30 4, 16 10, 6 24 M6 24 L 8 13 M6 24 L 17 21" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
           <span>hand drawn using custom built <br> open source animation program</span>
@@ -288,8 +297,8 @@
       </div>
     </div>
     <div class="frame-row">
-      <span>Computer science, University of Florida</span>
-      <span>Scroll for projects</span>
+      <span></span>
+      <span></span>
     </div>
   </div>
 </header>

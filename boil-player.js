@@ -107,15 +107,60 @@
     canvas.style.aspectRatio = W + ' / ' + H;
     if (!canvas.hasAttribute('role')) canvas.setAttribute('role', 'img');
 
+    // Corner text: with data-boil-corners="<selector>", strokes in the top or bottom
+    // fifth of the drawing are pulled out and pinned to the corners of that element,
+    // so text drawn in a corner stays in the screen's corner at any size.
+    const host = canvas.dataset.boilCorners && canvas.closest(canvas.dataset.boilCorners);
+    const groupOf = new WeakMap(), boxes = {};
+    let ov = null, octx = null;
+    if (host) {
+      for (const f of doc.frames) for (const L of doc.layers) for (const s of (f.cels || {})[L.id] || []) {
+        if (!s.pts || !s.pts.length) continue;
+        let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+        for (const p of s.pts) { x0 = Math.min(x0, p[0]); y0 = Math.min(y0, p[1]); x1 = Math.max(x1, p[0]); y1 = Math.max(y1, p[1]); }
+        const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+        const ay = cy < H * 0.2 ? 0 : cy > H * 0.8 ? 1 : -1;
+        if (ay < 0) continue;
+        const ax = cx < W / 3 ? 0 : cx > W * 2 / 3 ? 1 : 0.5, key = ax + ',' + ay, r = (s.size || 0) / 2;
+        const b = boxes[key] || (boxes[key] = { ax, ay, x0: 1e9, y0: 1e9, x1: -1e9, y1: -1e9 });
+        b.x0 = Math.min(b.x0, x0 - r); b.y0 = Math.min(b.y0, y0 - r); b.x1 = Math.max(b.x1, x1 + r); b.y1 = Math.max(b.y1, y1 + r);
+        groupOf.set(s, b);
+      }
+      if (Object.keys(boxes).length) {
+        ov = document.createElement('canvas');
+        ov.className = 'boil-corners'; ov.setAttribute('aria-hidden', 'true');
+        host.appendChild(ov); octx = ov.getContext('2d');
+      }
+    }
+    function drawCorners(f, k) {
+      octx.setTransform(1, 0, 0, 1, 0, 0);
+      octx.clearRect(0, 0, ov.width, ov.height);
+      for (const L of doc.layers) {
+        if (L.visible === false) continue;
+        const st = f.cels && f.cels[L.id];
+        if (!st) continue;
+        octx.globalAlpha = L.opacity == null ? 1 : L.opacity;
+        for (const s of st) {
+          const b = groupOf.get(s); if (!b) continue;
+          const dx = b.ax === 0 ? -b.x0 * k : b.ax === 1 ? ov.width - b.x1 * k : (ov.width - (b.x0 + b.x1) * k) / 2;
+          const dy = b.ay ? ov.height - b.y1 * k : -b.y0 * k;
+          octx.setTransform(k, 0, 0, k, dx, dy); drawStroke(octx, s);
+        }
+      }
+      octx.globalAlpha = 1;
+    }
+
     let shown = 0;
     function draw(fi) {
       shown = fi;
       const f = doc.frames[fi], k = canvas.width / W;
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (ov) drawCorners(f, k);
       for (const L of doc.layers) {
         if (L.visible === false) continue;
-        const st = f.cels && f.cels[L.id];
+        let st = f.cels && f.cels[L.id];
+        if (ov && st) st = st.filter(s => !groupOf.has(s));
         if (!st || !st.length) continue;
         const op = L.opacity == null ? 1 : L.opacity;
         if (op >= 1) {
@@ -132,11 +177,19 @@
       if (!r.width) return;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const cw = Math.max(1, Math.round(r.width * dpr)), ch = Math.max(1, Math.round(cw * H / W));
-      if (canvas.width === cw && canvas.height === ch) return;
+      let changed = canvas.width !== cw || canvas.height !== ch;
+      if (ov) {
+        const o = ov.getBoundingClientRect();
+        const ow = Math.max(1, Math.round(o.width * dpr)), oh = Math.max(1, Math.round(o.height * dpr));
+        if (ov.width !== ow || ov.height !== oh) { ov.width = ow; ov.height = oh; changed = true; }
+      }
+      if (!changed) return;
       canvas.width = tmp.width = cw; canvas.height = tmp.height = ch;
       draw(shown);
     }
-    new ResizeObserver(size).observe(canvas);
+    const ro = new ResizeObserver(size);
+    ro.observe(canvas);
+    if (ov) ro.observe(ov);
     size();
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { draw(n - 1); return; }
