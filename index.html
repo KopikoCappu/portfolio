@@ -8,7 +8,7 @@
 <link rel="icon" href="headshot.webp">
 <link rel="preload" href="project.json" as="fetch" crossorigin fetchpriority="high">
 <script src="boil-player.js" defer fetchpriority="high"></script>
-<link rel="preload" as="image" href="background.gif">
+<link rel="preload" as="image" href="mountain.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Hanken+Grotesk:wght@400;500;600&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
@@ -67,6 +67,7 @@
   }
   /* --focus: the part of the GIF that must stay visible when the screen crops it (x% y%) */
   .frame-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--focus, 50% 50%); z-index: -2; }
+  .frame { --focus: 50% 45%; }
   .frame::after {
     content: ""; position: absolute; inset: 0; z-index: -1;
     background: linear-gradient(180deg, rgba(0,0,0,.4), rgba(0,0,0,0) 24%, rgba(0,0,0,0) 70%, rgba(15,18,17,.7) 100%);
@@ -282,7 +283,7 @@
     </ul>
   </nav>
   <div class="frame">
-    <img class="frame-bg" src="background.gif" alt="">
+    <img class="frame-bg" src="mountain.jpg" alt="">
     <div class="frame-row" aria-hidden="true">
       <span></span>
     </div>
@@ -542,8 +543,9 @@
     tc.textContent = `${pad(Math.floor(f / 86400))}:${pad(Math.floor(f / 1440) % 60)}:${pad(Math.floor(f / 24) % 60)}:${pad(f % 24)}`;
     if (!document.hidden) setTimeout(tick, 1000 / 24);
   }
-  if (reduce) tc.textContent = '00:00:00:01';
-  else { tick(); document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); }); }
+  if (!tc) { /* timecode removed from the hero */ }
+  else if (reduce) tc.textContent = '00:00:00:01';
+  else { tick();document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); }); }
 
   // Carousel
   const viewport = document.getElementById('viewport');
