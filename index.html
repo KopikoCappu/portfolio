@@ -38,11 +38,14 @@
     --hand: "Nanum Pen Script", "Bradley Hand", cursive;
     --ease: cubic-bezier(.22, 1, .36, 1);
     /* carousel: one project at a time, with wide empty margins on both sides for the arrows */
+    /* every section is one screen tall: content is centered in the space under the nav */
+    --nav-h: 88px;
+    --sp: clamp(20px, 4.5vh, 64px);
     --gutter: clamp(100px, 14vw, 240px);
     --slide-w: min(1080px, calc(100vw - 2 * var(--gutter)));
   }
   *, *::before, *::after { box-sizing: border-box; }
-  html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+  html { scroll-behavior: smooth; }
   body {
     margin: 0; background: var(--bg); color: var(--ink);
     font: 18px/1.65 "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -55,41 +58,49 @@
   .hand { font-family: var(--hand); color: var(--sky); line-height: 1; font-weight: 400; }
   .wrap { width: 100%; max-width: var(--wide); margin: 0 auto; padding: 0 var(--pad); }
 
-  /* ---------- nav ---------- */
+  /* ---------- fixed mountain backdrop ---------- */
+  /* The photo never scrolls. As the content comes up over it, a blurred copy and a dusk tint
+     fade in (JS sets their opacity), so text stays readable and the mountain stays visible. */
+  .sky { position: fixed; inset: 0; height: 100vh; height: 100lvh; z-index: -2; overflow: hidden; background: var(--bg); }
+  /* --focus: the part of the photo that must stay visible when the screen crops it (x% y%) */
+  .sky img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--focus, 50% 42%); }
+  .sky .blur { filter: blur(16px) saturate(1.05); transform: scale(1.08); opacity: 0; will-change: opacity; }
+  .sky-dim { position: absolute; inset: 0; opacity: 0; will-change: opacity; background: linear-gradient(180deg, rgba(11, 13, 21, .62), rgba(11, 13, 21, .72) 60%, rgba(11, 13, 21, .82)); }
+
+  /* ---------- nav: links split to either side of the name ---------- */
   .nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 10;
-    display: flex; justify-content: space-between; align-items: center; gap: 16px;
-    padding: calc(18px + env(safe-area-inset-top, 0px)) var(--pad) 18px;
+    position: fixed; top: 0; left: 0; right: 0; z-index: 10; height: calc(var(--nav-h) + env(safe-area-inset-top, 0px));
+    display: grid; grid-template-columns: 1fr 160px 1fr; align-items: center;
+    padding: env(safe-area-inset-top, 0px) var(--pad) 0;
     font-weight: 500; font-size: 15px;
-    transition: background .4s ease, padding .4s var(--ease), box-shadow .4s ease;
+    transition: background .4s ease, box-shadow .4s ease;
   }
   .nav.scrolled {
-    background: rgba(17, 19, 27, .72); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
-    padding-top: calc(12px + env(safe-area-inset-top, 0px)); padding-bottom: 12px;
+    background: rgba(13, 15, 23, .55); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
     box-shadow: 0 1px 0 var(--line);
   }
-  .nav .mark { font-family: var(--serif); font-size: 26px; line-height: 1; text-decoration: none; }
-  .nav ul { list-style: none; display: flex; gap: clamp(18px, 3vw, 36px); margin: 0; padding: 0; }
+  .nav ul { list-style: none; display: flex; gap: clamp(18px, 3vw, 40px); margin: 0; padding: 0; }
+  .nav ul:first-child { grid-column: 1; justify-self: start; }
+  .nav ul:last-child { grid-column: 3; justify-self: end; }
   .nav ul a { text-decoration: none; opacity: .85; transition: opacity .2s; }
   .nav ul a:hover { opacity: 1; }
-  .nav:not(.scrolled) { text-shadow: 0 1px 12px rgba(14, 16, 26, .45); }
+  .nav { text-shadow: 0 1px 12px rgba(14, 16, 26, .45); }
 
   /* ---------- hero ---------- */
-  .frame {
-    position: relative; height: 100vh; height: 100svh; min-height: 560px; overflow: hidden;
-    display: grid; place-items: center; isolation: isolate; background: var(--bg-2);
-  }
-  /* --focus: the part of the photo that must stay visible when the screen crops it (x% y%) */
-  .frame-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--focus, 50% 42%); z-index: -2; }
-  /* Darken the top for the nav, and melt the bottom into the page color */
+  .frame { position: relative; height: 100vh; height: 100svh; min-height: 560px; overflow: hidden; }
+  /* darken the top for the nav, and a soft shadow behind the name so it reads over the snow */
   .frame::after {
-    content: ""; position: absolute; inset: 0; z-index: -1;
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
     background:
       radial-gradient(ellipse 55% 38% at 50% 50%, rgba(30, 18, 26, .36), transparent 70%),
-      linear-gradient(180deg, rgba(14, 16, 26, .36), rgba(14, 16, 26, 0) 22%, rgba(17, 19, 27, 0) 64%, rgba(17, 19, 27, .72) 87%, var(--bg) 100%);
+      linear-gradient(180deg, rgba(14, 16, 26, .36), rgba(14, 16, 26, 0) 22%);
   }
-  .title-card { display: flex; flex-direction: column; align-items: center; padding: 0 var(--pad); }
-  .name-wrap { position: relative; width: min(70vw, 900px); }
+  /* The name is fixed: it starts big in the middle, then JS shrinks it up into the nav as you scroll. */
+  .name-wrap {
+    position: fixed; left: 50%; top: 50%; z-index: 11; width: min(70vw, 900px);
+    transform: translate(-50%, -50%); transform-origin: center; will-change: transform;
+  }
+  .name-wrap.docked { cursor: pointer; }
   .name { display: block; width: 100%; filter: drop-shadow(0 2px 3px rgba(40, 18, 24, .45)) drop-shadow(0 6px 28px rgba(30, 14, 22, .55)); }
   /* Corner text from the drawing (CS + Econ, UF 2027), pinned to the hero's corners.
      Change these insets to move it: top, left/right, bottom. */
@@ -103,29 +114,34 @@
   }
   .name-note {
     position: absolute; right: -14%; top: 4%; margin: 0; display: flex; gap: 6px; align-items: flex-start;
-    font-size: 30px; color: var(--ink); transform: rotate(4deg); white-space: nowrap;
+    font-size: 30px; color: var(--ink); transform: rotate(4deg); white-space: nowrap; pointer-events: none;
     text-shadow: 0 1px 2px rgba(40, 18, 24, .5), 0 2px 14px rgba(30, 14, 22, .55);
   }
   .scroll-cue {
     position: absolute; left: 50%; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
     display: flex; flex-direction: column; align-items: center; gap: 6px;
-    font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); text-decoration: none;
+    font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink); text-decoration: none;
+    text-shadow: 0 1px 10px rgba(14, 16, 26, .6);
   }
-  .scroll-cue span { width: 1px; height: 34px; background: linear-gradient(var(--dim), transparent); animation: cue 2.4s var(--ease) infinite; transform-origin: top; }
+  .scroll-cue span { width: 1px; height: 34px; background: linear-gradient(var(--ink), transparent); animation: cue 2.4s var(--ease) infinite; transform-origin: top; }
   @keyframes cue { 0% { transform: scaleY(0); opacity: 1; } 60% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
 
   /* ---------- section heads ---------- */
   section { position: relative; }
-  .sec-head { display: flex; flex-direction: column; gap: 14px; margin-bottom: clamp(56px, 8vw, 104px); }
+  .screen {
+    min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; justify-content: center;
+    padding: calc(var(--nav-h) + env(safe-area-inset-top, 0px) + var(--sp)) 0 var(--sp);
+  }
+  .sec-head { display: flex; flex-direction: column; gap: clamp(6px, 1.3vh, 14px); margin-bottom: clamp(20px, 5vh, 72px); }
   .eyebrow { margin: 0; display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--peach); }
   .eyebrow::before { content: ""; width: 28px; height: 1px; background: currentColor; opacity: .7; }
-  .sec-title { margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(46px, 6.4vw, 92px); line-height: 1; letter-spacing: -0.015em; }
+  .sec-title { margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(40px, min(6.4vw, 8.5vh), 92px); line-height: 1; letter-spacing: -0.015em; }
   .sec-title em { font-style: italic; color: var(--peach); }
-  .sec-head .hand { margin: 4px 0 0; font-size: 30px; transform: rotate(-2deg); transform-origin: left; }
+  .sec-head .hand { margin: 2px 0 0; font-size: clamp(22px, 3.4vh, 30px); transform: rotate(-2deg); transform-origin: left; }
 
   /* ---------- work (carousel) ---------- */
-  .work { padding: clamp(96px, 12vw, 150px) 0 clamp(96px, 12vw, 150px); overflow: hidden; isolation: isolate; }
-  .work-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-bottom: clamp(48px, 6vw, 80px); }
+  .work { overflow: hidden; isolation: isolate; }
+  .work-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-bottom: clamp(16px, 4vh, 56px); }
   .work-head .sec-head { margin-bottom: 0; }
   .count { font-size: 15px; color: var(--dim-2); font-variant-numeric: tabular-nums; letter-spacing: .06em; padding-bottom: 10px; }
   .count b { color: var(--peach); font-weight: 600; }
@@ -161,18 +177,18 @@
   .p-media.contain img { object-fit: contain; }
   .p-media video { opacity: 0; transition: opacity .5s ease, transform 1.2s var(--ease); }
   .p-media video.on { opacity: 1; }
-  .slide h3 { margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(40px, 4.4vw, 64px); line-height: 1; letter-spacing: -0.01em; }
-  .p-body .hand { margin: 10px 0 0; font-size: 28px; transform: rotate(-2deg); transform-origin: left; }
-  .p-desc { margin: 24px 0 0; color: var(--dim); font-size: 17px; line-height: 1.7; }
-  .tags { list-style: none; margin: 24px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .slide h3 { margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(34px, min(4.4vw, 7vh), 64px); line-height: 1; letter-spacing: -0.01em; }
+  .p-body .hand { margin: 8px 0 0; font-size: clamp(22px, 3.4vh, 28px); transform: rotate(-2deg); transform-origin: left; }
+  .p-desc { margin: clamp(12px, 2.6vh, 24px) 0 0; color: var(--dim); font-size: clamp(15px, 2vh, 17px); line-height: 1.65; }
+  .tags { list-style: none; margin: clamp(12px, 2.6vh, 24px) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
   .tags li { padding: 5px 13px; border-radius: 999px; border: 1px solid rgba(147, 188, 203, .2); background: rgba(147, 188, 203, .07); font-size: 13.5px; color: var(--dim); }
   .p-link {
-    display: inline-flex; align-items: center; gap: 8px; margin-top: 28px; font-weight: 500; font-size: 16px;
+    display: inline-flex; align-items: center; gap: 8px; margin-top: clamp(14px, 3vh, 28px); font-weight: 500; font-size: 16px;
     color: var(--peach); text-decoration: none; border-bottom: 1px solid rgba(236, 191, 156, .35); padding-bottom: 2px; transition: border-color .25s, gap .25s var(--ease);
   }
   .p-link:hover { border-color: var(--peach); gap: 12px; }
   .p-link svg { width: 14px; height: 14px; }
-  .p-where { margin-top: 28px; font-size: 15px; color: var(--dim-2); }
+  .p-where { margin-top: clamp(14px, 3vh, 28px); font-size: 15px; color: var(--dim-2); }
 
   /* arrows float in the empty side margins, level with the middle of the slide */
   .arrow {
@@ -190,7 +206,7 @@
 
   .strip {
     display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px;
-    width: var(--slide-w); margin: clamp(48px, 6vw, 72px) auto 0;
+    width: var(--slide-w); margin: clamp(16px, 4vh, 64px) auto 0;
   }
   .strip button {
     all: unset; box-sizing: border-box; cursor: pointer; padding: 14px 2px 0;
@@ -204,58 +220,73 @@
   .strip button[aria-current="true"] .t { color: var(--ink); }
 
   /* ---------- about ---------- */
-  .about {
-    padding: clamp(96px, 12vw, 160px) 0;
-    background:
-      linear-gradient(180deg, var(--bg), var(--bg-2) 25%, var(--bg-2) 75%, var(--bg));
-  }
-  .about-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(40px, 7vw, 112px); align-items: start; }
-  .portrait { position: sticky; top: 112px; margin: 0; }
+  .about-grid { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(40px, 6vw, 104px); align-items: center; }
+  /* the photo is sized to the screen's height so the whole section fits */
+  .portrait { margin: 0; width: min(420px, 32vw, calc((100svh - var(--nav-h) - 2 * var(--sp) - 64px) * .8)); }
   .portrait img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 24px; display: block; background: var(--bg-3); box-shadow: 0 40px 90px -40px rgba(0, 0, 0, .75); }
-  .portrait figcaption { margin: 16px 0 0 8px; display: flex; align-items: center; gap: 8px; font-size: 30px; }
-  .about-copy p { margin: 0 0 22px; color: var(--dim); font-size: 19px; line-height: 1.75; max-width: 34em; }
-  .about-copy p.lead { font-family: var(--serif); color: var(--ink); font-size: clamp(28px, 2.8vw, 38px); line-height: 1.25; letter-spacing: -0.005em; margin-bottom: 32px; }
+  .portrait figcaption { margin: 14px 0 0 8px; display: flex; align-items: center; gap: 8px; font-size: clamp(24px, 3.4vh, 30px); }
+  .about .sec-head { margin-bottom: clamp(16px, 3.6vh, 44px); }
+  .about-copy p { margin: 0 0 clamp(10px, 2vh, 22px); color: var(--dim); font-size: clamp(15px, 2.2vh, 19px); line-height: 1.65; max-width: 36em; }
+  .about-copy p.lead { font-family: var(--serif); color: var(--ink); font-size: clamp(22px, min(2.8vw, 4.2vh), 38px); line-height: 1.25; letter-spacing: -0.005em; margin-bottom: clamp(12px, 2.6vh, 32px); }
   .about-copy p.lead em { color: var(--peach); }
-  .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 40px; margin: 56px 0 0; padding: 40px 0 0; border-top: 1px solid var(--line); }
-  .facts dt { font-size: 13px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--sky); margin-bottom: 8px; }
-  .facts dd { margin: 0; font-size: 17px; line-height: 1.6; }
+  .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(12px, 2.6vh, 32px) 40px; margin: clamp(14px, 3.4vh, 48px) 0 0; padding: clamp(14px, 3vh, 36px) 0 0; border-top: 1px solid var(--line); }
+  .facts dt { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--sky); margin-bottom: 6px; }
+  .facts dd { margin: 0; font-size: clamp(14.5px, 2vh, 17px); line-height: 1.55; }
 
-  /* ---------- experience (timeline) ---------- */
-  .exp { padding: clamp(96px, 12vw, 160px) 0; }
-  .exp-grid { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(40px, 6vw, 96px); align-items: start; }
-  .exp-side { position: sticky; top: 112px; }
-  .exp-side .sec-head { margin-bottom: 44px; }
-  .stats { list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; }
-  .stats li { display: flex; align-items: center; gap: 16px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--dim); font-size: 15px; line-height: 1.4; }
-  .stats b { font-family: var(--serif); font-weight: 400; font-size: 48px; line-height: 1; color: var(--peach); min-width: 1.3em; }
-  .timeline { list-style: none; margin: 0; padding: 0 0 0 40px; position: relative; display: grid; gap: 22px; }
-  /* the line: a faint track, plus a sunset-colored fill that grows as you scroll (JS sets --progress) */
-  .timeline::before, .timeline::after { content: ""; position: absolute; left: 7px; top: 14px; bottom: 14px; width: 2px; border-radius: 2px; }
+  /* ---------- experience: a timeline of roles, with the selected one shown in detail ---------- */
+  .exp-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px 48px; flex-wrap: wrap; margin-bottom: clamp(20px, 4.5vh, 56px); }
+  .exp-head .sec-head { margin-bottom: 0; }
+  .stats { list-style: none; margin: 0; padding: 0; display: flex; gap: clamp(20px, 3vw, 48px); }
+  .stats li { display: flex; flex-direction: column; gap: 6px; width: 150px; color: var(--dim); font-size: 14px; line-height: 1.4; }
+  .stats b { font-family: var(--serif); font-weight: 400; font-size: clamp(36px, 5.5vh, 48px); line-height: 1; color: var(--peach); }
+  .exp-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 4vw, 64px); align-items: start; }
+  .timeline { list-style: none; margin: 0; padding: 0 0 0 34px; position: relative; display: grid; gap: 2px; }
+  /* the line: a faint track, plus a sunset-colored fill down to the selected role (JS sets --progress) */
+  .timeline::before, .timeline::after { content: ""; position: absolute; left: 7px; top: 22px; bottom: 22px; width: 2px; border-radius: 2px; }
   .timeline::before { background: var(--line); }
-  .timeline::after { background: linear-gradient(180deg, var(--peach), var(--rust) 50%, var(--sky)); transform-origin: top; transform: scaleY(var(--progress, 0)); }
-  .job {
-    position: relative; padding: 28px 32px 30px; border-radius: 20px; border: 1px solid var(--line);
-    background: linear-gradient(135deg, rgba(251, 243, 228, .05), rgba(251, 243, 228, .012));
-    transition: border-color .3s, background .3s, opacity 1s var(--ease), transform 1s var(--ease);
-  }
-  .job:hover { border-color: rgba(236, 191, 156, .35); background: linear-gradient(135deg, rgba(236, 191, 156, .08), rgba(251, 243, 228, .015)); }
-  /* the dot on the line; it lights up when the card scrolls into view */
+  .timeline::after { background: linear-gradient(180deg, var(--peach), var(--rust) 60%, var(--sky)); transform-origin: top; transform: scaleY(var(--progress, 0)); transition: transform .6s var(--ease); }
+  .job { position: relative; }
   .job::before {
-    content: ""; position: absolute; left: -40px; top: 34px; width: 16px; height: 16px; border-radius: 50%; z-index: 1;
-    background: var(--bg); border: 2px solid var(--mist); transition: background .6s, border-color .6s, box-shadow .6s;
+    content: ""; position: absolute; left: -34px; top: 50%; margin-top: -8px; width: 16px; height: 16px; border-radius: 50%; z-index: 1;
+    background: var(--bg); border: 2px solid var(--mist); transition: background .4s, border-color .4s, box-shadow .4s;
   }
-  .job.in::before { background: var(--peach); border-color: var(--peach); box-shadow: 0 0 0 6px rgba(236, 191, 156, .14); }
-  .job-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px 16px; flex-wrap: wrap; }
-  .kind { margin: 0 0 8px; font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--dim-2); }
-  .job h3 { margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(26px, 2.4vw, 34px); line-height: 1.15; }
-  .when { margin: 0; padding: 4px 12px; border-radius: 999px; background: rgba(147, 188, 203, .1); border: 1px solid rgba(147, 188, 203, .2); color: var(--sky); font-size: 13px; white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .job .where { margin: 8px 0 14px; color: var(--peach); font-size: 16px; font-weight: 500; }
-  .job .what { margin: 0; color: var(--dim); font-size: 16.5px; line-height: 1.7; }
+  .job.active::before { background: var(--peach); border-color: var(--peach); box-shadow: 0 0 0 6px rgba(236, 191, 156, .16); }
+  .job-btn {
+    all: unset; box-sizing: border-box; width: 100%; cursor: pointer; border-radius: 14px;
+    display: flex; flex-direction: column; gap: 2px;
+    padding: clamp(7px, 1.3vh, 13px) 16px; transition: background .3s;
+  }
+  .job-btn:hover { background: rgba(251, 243, 228, .04); }
+  .job-btn:focus-visible { outline: 2px solid var(--peach); outline-offset: 2px; }
+  .job.active .job-btn { background: rgba(251, 243, 228, .07); }
+  .job-title { font-family: var(--serif); font-size: clamp(19px, min(1.8vw, 3vh), 25px); line-height: 1.2; color: var(--dim); transition: color .3s; }
+  .job-sub { font-size: 13.5px; color: var(--dim-2); }
+  .job-org { transition: color .3s; }
+  .job-when { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .job-when::before { content: "·"; margin: 0 8px; opacity: .6; }
+  .job.active .job-title { color: var(--ink); }
+  .job.active .job-org { color: var(--peach); }
+  .job-more .kind { display: none; }
+  .job-more p { margin: 0; }
+  .js .job-more { display: none; }
+  .kind { margin: 0 0 10px; font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--dim-2); }
+  .when { display: inline-block; margin: 0; padding: 4px 12px; border-radius: 999px; background: rgba(147, 188, 203, .1); border: 1px solid rgba(147, 188, 203, .2); color: var(--sky); font-size: 13px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .job-detail {
+    padding: clamp(22px, 4vh, 44px) clamp(24px, 3vw, 44px); border-radius: 24px; border: 1px solid var(--line);
+    background: linear-gradient(135deg, rgba(251, 243, 228, .07), rgba(251, 243, 228, .02));
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    transition: opacity .35s ease, transform .5s var(--ease);
+  }
+  .job-detail:empty { display: none; }
+  .job-detail.swap { opacity: 0; transform: translateY(8px); }
+  .job-detail h3 { margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(28px, min(3vw, 5vh), 42px); line-height: 1.1; }
+  .job-detail .where { margin: 10px 0 16px; color: var(--peach); font-size: 16px; font-weight: 500; }
+  .job-detail .what { margin: clamp(14px, 2.6vh, 22px) 0 0; color: var(--dim); font-size: clamp(15px, 2.1vh, 17.5px); line-height: 1.7; }
 
   /* ---------- contact ---------- */
-  .end { padding: clamp(120px, 15vw, 200px) 0 clamp(140px, 16vw, 220px); overflow: hidden; isolation: isolate; }
-  .end-inner { display: flex; flex-direction: column; align-items: center; gap: 28px; text-align: center; }
-  .end .big { margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(96px, 15vw, 220px); line-height: .9; letter-spacing: -0.02em; text-shadow: 0 4px 40px rgba(14, 16, 26, .4); }
+  .end { overflow: hidden; isolation: isolate; }
+  .end-inner { display: flex; flex-direction: column; align-items: center; gap: clamp(12px, 2.8vh, 28px); text-align: center; }
+  .end .big { margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(72px, min(15vw, 20vh), 220px); line-height: .9; letter-spacing: -0.02em; text-shadow: 0 4px 40px rgba(14, 16, 26, .4); }
   .end .big em { color: var(--peach); }
   .end .sub { margin: 0; color: var(--dim); font-size: 20px; max-width: 30em; }
   .end .mail {
@@ -271,7 +302,7 @@
     font-size: 15px; font-weight: 500; transition: border-color .25s, background .25s;
   }
   .end .links a:hover { border-color: rgba(236, 191, 156, .7); background: rgba(236, 191, 156, .12); }
-  footer { padding: 28px var(--pad) calc(28px + env(safe-area-inset-bottom, 0px)); color: var(--dim-2); font-size: 14px; text-align: center; background: #0b0d14; }
+  footer { padding: 28px var(--pad) calc(28px + env(safe-area-inset-bottom, 0px)); color: var(--dim-2); font-size: 14px; text-align: center; border-top: 1px solid var(--line); }
 
   /* ---------- reveal on scroll (only when JS runs, so nothing is ever stuck hidden) ---------- */
   .js .reveal { opacity: 0; transform: translateY(28px); transition: opacity 1s var(--ease), transform 1s var(--ease); }
@@ -280,7 +311,7 @@
   /* ---------- smaller screens ---------- */
   @media (max-width: 900px) {
     :root { --gutter: 9vw; }
-    .name-note { position: static; justify-content: center; transform: rotate(-2deg); margin-top: 10px; font-size: 26px; white-space: normal; text-align: center; }
+    .name-note { right: 0; left: 0; top: 100%; justify-content: center; transform: rotate(-2deg); margin-top: 6px; font-size: 26px; white-space: normal; text-align: center; }
     .name-note svg { display: none; }
     .slide { grid-template-columns: minmax(0, 1fr); row-gap: 28px; align-items: start; }
     .p-media, .p-body { grid-column: 1; }
@@ -292,69 +323,92 @@
     .strip button { padding-top: 0; height: 12px; }
     .strip .n, .strip .t { display: none; }
     .about-grid { grid-template-columns: minmax(0, 1fr); }
-    .portrait { position: static; max-width: 340px; }
-    .exp-grid { grid-template-columns: minmax(0, 1fr); }
-    .exp-side { position: static; }
-    .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-    .stats li { flex-direction: column; gap: 6px; font-size: 14px; }
-    .stats b { font-size: 40px; }
+    .portrait { width: min(300px, 70vw); }
+    /* experience on phones: every role shown in full, no detail card */
+    .exp-body { grid-template-columns: minmax(0, 1fr); }
+    .job-detail { display: none; }
+    .js .job-more { display: block; }
+    .job-more { padding: 0 16px 14px; color: var(--dim); font-size: 15.5px; line-height: 1.65; }
+    .job::before { top: 22px; margin-top: 0; }
+    .job.active .job-btn { background: none; }
+    .job.active .job-title { color: var(--ink); }
+    .stats li { width: auto; flex: 1 1 0; min-width: 0; }
     .viewport { --peek-gap: 28px; }
   }
   @media (min-width: 901px) { .arrows { display: contents; } }
+  @media (min-width: 901px) { .exp-head { flex-wrap: nowrap; } }
+  @media (min-width: 901px) and (max-height: 760px) { .work .sec-head .hand { display: none; } }
+  @media (min-width: 901px) and (max-height: 820px) {
+    .p-media { grid-column: 1 / 7; }
+    .p-body { grid-column: 8 / 13; }
+  }
   @media (max-width: 560px) {
     body { font-size: 17px; }
     .name-wrap { width: 94vw; }
-    .nav ul { gap: 16px; font-size: 14px; }
+    :root { --nav-h: 66px; }
+    .nav { display: flex; justify-content: flex-end; gap: 14px; }
+    .nav ul { gap: 14px; font-size: 13.5px; }
     .facts { grid-template-columns: minmax(0, 1fr); gap: 24px; }
     .sec-head .hand { font-size: 26px; }
     .scroll-cue { display: none; }
-    .p-desc { font-size: 16px; }
-    .stats { grid-template-columns: minmax(0, 1fr); }
-    .stats li { flex-direction: row; align-items: center; }
-    .timeline { padding-left: 28px; }
+    .p-desc { font-size: 15px; line-height: 1.55; }
+    /* phones: keep the whole project on one screen */
+    .slide { row-gap: 14px; }
+    .p-body .hand { font-size: 22px; margin-top: 4px; }
+    .tags { gap: 6px; }
+    .tags li { padding: 4px 11px; font-size: 13px; }
+    .arrows { margin-top: 14px; }
+    .strip { display: none; }
+    .stats { gap: 16px; }
+    .stats li { font-size: 13px; }
+    .timeline { padding-left: 24px; }
     .timeline::before, .timeline::after { left: 5px; }
-    .job { padding: 22px 20px 24px; }
-    .job::before { left: -28px; top: 28px; width: 14px; height: 14px; }
+    .job::before { left: -24px; width: 14px; height: 14px; }
+    .job-btn { padding: 10px 10px 6px; }
+    .job-more { padding: 0 10px 14px; }
   }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .js .reveal { opacity: 1; transform: none; transition: none; }
     .scroll-cue span { animation: none; }
-    .slide, .p-body, .p-media img, .p-media video, .job, .job::before { transition: none; }
-    .timeline::after { transform: none; }
+    .slide, .p-body, .p-media img, .p-media video, .job::before, .job-detail, .timeline::after { transition: none; }
   }
 </style>
 </head>
 <body>
 
+<div class="sky" aria-hidden="true">
+  <img src="mountain.webp" alt="" fetchpriority="high">
+  <img class="blur" src="mountain.webp" alt="">
+  <div class="sky-dim" id="sky-dim"></div>
+</div>
+
 <header class="top" id="top">
   <nav class="nav" id="nav" aria-label="Sections">
-    <a class="mark" href="#top" aria-label="Minh Tran, back to top">MT</a>
     <ul>
       <li><a href="#work">Work</a></li>
       <li><a href="#about">About</a></li>
+    </ul>
+    <ul>
       <li><a href="#experience">Experience</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
   <div class="frame">
-    <img class="frame-bg" src="mountain.webp" alt="" fetchpriority="high">
-    <div class="title-card">
-      <h1 class="sr-only">Minh Tran</h1>
-      <div class="name-wrap">
-        <canvas class="name" data-boil="project.json" data-boil-corners=".frame" aria-label="Minh Tran, handwritten"></canvas>
-        <p class="name-note hand" aria-hidden="true">
-          <svg width="46" height="30" viewBox="0 0 46 30"><path d="M42 6 C 30 4, 16 10, 6 24 M6 24 L 8 13 M6 24 L 17 21" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
-          <span>hand drawn using custom built <br> open source animation program</span>
-        </p>
-      </div>
+    <h1 class="sr-only">Minh Tran</h1>
+    <div class="name-wrap" id="name-wrap">
+      <canvas class="name" data-boil="project.json" data-boil-corners=".frame" aria-label="Minh Tran, handwritten"></canvas>
+      <p class="name-note hand" id="name-note" aria-hidden="true">
+        <svg width="46" height="30" viewBox="0 0 46 30"><path d="M42 6 C 30 4, 16 10, 6 24 M6 24 L 8 13 M6 24 L 17 21" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <span>hand drawn using custom built <br> open source animation program</span>
+      </p>
     </div>
-    <a class="scroll-cue" href="#work" aria-label="Scroll to projects">Work<span aria-hidden="true"></span></a>
+    <a class="scroll-cue" id="scroll-cue" href="#work" aria-label="Scroll to projects">Work<span aria-hidden="true"></span></a>
   </div>
 </header>
 
 <main>
-  <section class="work" id="work" aria-roledescription="carousel" aria-labelledby="work-title">
+  <section class="work screen" id="work" aria-roledescription="carousel" aria-labelledby="work-title">
     <div class="wrap work-head reveal">
       <div class="sec-head">
         <p class="eyebrow">Selected work</p>
@@ -470,21 +524,20 @@
     </div>
   </section>
 
-  <section class="about" id="about" aria-labelledby="about-title">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <p class="eyebrow">About</p>
-        <h2 class="sec-title" id="about-title">A little <em>about me</em></h2>
-      </div>
-      <div class="about-grid">
-        <figure class="portrait reveal">
-          <img src="headshot.webp" alt="Minh Tran" loading="lazy">
-          <figcaption class="hand" aria-hidden="true">
-            <svg width="40" height="26" viewBox="0 0 40 26"><path d="M36 22 C 26 20, 12 14, 6 4 M6 4 L 6 13 M6 4 L 15 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
-            that's me
-          </figcaption>
-        </figure>
-        <div class="reveal">
+  <section class="about screen" id="about" aria-labelledby="about-title">
+    <div class="wrap about-grid">
+      <figure class="portrait reveal">
+        <img src="headshot.webp" alt="Minh Tran" loading="lazy">
+        <figcaption class="hand" aria-hidden="true">
+          <svg width="40" height="26" viewBox="0 0 40 26"><path d="M36 22 C 26 20, 12 14, 6 4 M6 4 L 6 13 M6 4 L 15 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+          that's me
+        </figcaption>
+      </figure>
+      <div class="reveal">
+        <div class="sec-head">
+          <p class="eyebrow">About</p>
+          <h2 class="sec-title" id="about-title">A little <em>about me</em></h2>
+        </div>
           <div class="about-copy">
             <p class="lead">I'm Minh, studying computer science and economics at the University of Florida, graduating <em>December 2027</em>.</p>
             <p>Most of my projects start the same way: I notice something that should exist, then I build it and ship it. That's how Pod, InkBuddy, Mycelium, and Mocean happened.</p>
@@ -496,14 +549,13 @@
             <div><dt>Languages</dt><dd>Python, TypeScript, JavaScript, Bash</dd></div>
             <div><dt>Tools</dt><dd>React Native, Expo, PyTorch, scikit-learn, Firebase, GCP, HiPerGator</dd></div>
           </dl>
-        </div>
       </div>
     </div>
   </section>
 
-  <section class="exp" id="experience" aria-labelledby="exp-title">
-    <div class="wrap exp-grid">
-      <div class="exp-side reveal">
+  <section class="exp screen" id="experience" aria-labelledby="exp-title">
+    <div class="wrap">
+      <div class="exp-head reveal">
         <div class="sec-head">
           <p class="eyebrow">Experience</p>
           <h2 class="sec-title" id="exp-title">Where I've <em>worked</em></h2>
@@ -515,78 +567,57 @@
           <li><b>1</b><span>app shipped solo to the App Store</span></li>
         </ul>
       </div>
-      <ol class="timeline" id="timeline">
-          <li class="job reveal">
-            <div class="job-top">
-              <div>
-                <p class="kind">Research</p>
-                <h3>Machine learning research intern</h3>
-              </div>
-              <p class="when">Aug 2026 – now</p>
-            </div>
-            <p class="where">ME2 Lab, UF Materials Science</p>
-            <p class="what">Applying ML to electron microscopy: large-scale electron diffraction analysis, plus vision models that identify crystal structures and classify materials by their internal structure. I built an interactive 3D electron diffraction simulator to help the team see and understand patterns.</p>
-          </li>
-          <li class="job reveal">
-            <div class="job-top">
-              <div>
-                <p class="kind">Research</p>
-                <h3>Machine learning research assistant</h3>
-              </div>
-              <p class="when">Oct 2025 – now</p>
-            </div>
-            <p class="where">Epi-Logic Lab, University of Florida</p>
-            <p class="what">Building Python pipelines that process clinical genomic data on UF's HiPerGator cluster, and the k-mer datasets and models behind our antibiotic resistance classification work.</p>
-          </li>
-          <li class="job reveal">
-            <div class="job-top">
-              <div>
-                <p class="kind">Founder</p>
-                <h3>Founder and solo developer</h3>
-              </div>
-              <p class="when">Dec 2025 – now</p>
-            </div>
-            <p class="where">Pod</p>
-            <p class="what">Designed, built, and launched a real-time group planning app for iOS, from live GPS sharing and push notifications to four rounds of App Store review and over-the-air production updates.</p>
-          </li>
-          <li class="job reveal">
-            <div class="job-top">
-              <div>
-                <p class="kind">Teaching</p>
-                <h3>Teaching assistant, Senior Capstone Design</h3>
-              </div>
-              <p class="when">Aug 2025 – now</p>
-            </div>
-            <p class="where">UF Computer Engineering</p>
-            <p class="what">Mentoring four hardware and software teams at a time with design reviews, debugging help, and weekly presentation coaching. Teams have built an ASL-teaching robotic hand, now partnered with Notre Dame researchers, and a stacked microgreen grower. One team published a research paper.</p>
-          </li>
-          <li class="job reveal">
-            <div class="job-top">
-              <div>
-                <p class="kind">Leadership</p>
-                <h3>Founding officer and External VP</h3>
-              </div>
-              <p class="when">July 2026 – now</p>
-            </div>
-            <p class="where">Embodied Intelligence Group, UF's robotics club</p>
-            <p class="what">Running outreach with companies for funding and mentorship, which landed two hardware sponsors who donated servos and Arduino Nanos. I also lead workshops and work on the ML team training robotic arms to do tasks.</p>
-          </li>
-          <li class="job reveal">
-            <div class="job-top">
-              <div>
-                <p class="kind">Engineering</p>
-                <h3>Software automation engineer</h3>
-              </div>
-              <p class="when">Mar 2025 – now</p>
-            </div>
-            <p class="where">UF Computer and Information Science and Engineering</p>
-            <p class="what">Built the survey, routing, and email automation behind the UF and Kyoto study abroad exchange, cutting manual data entry by 98%.</p>
-          </li>
-      </ol>
+      <div class="exp-body reveal">
+        <ol class="timeline" id="timeline">
+        <li class="job">
+          <button class="job-btn" type="button" aria-controls="job-detail">
+            <span class="job-title">Machine learning research intern</span>
+            <span class="job-sub"><span class="job-org">ME2 Lab, UF Materials Science</span><span class="job-when">Aug 2026 – now</span></span>
+          </button>
+          <div class="job-more"><p class="kind">Research</p><p class="what">Applying ML to electron microscopy: large-scale electron diffraction analysis, plus vision models that identify crystal structures and classify materials by their internal structure. I built an interactive 3D electron diffraction simulator to help the team see and understand patterns.</p></div>
+        </li>
+        <li class="job">
+          <button class="job-btn" type="button" aria-controls="job-detail">
+            <span class="job-title">Machine learning research assistant</span>
+            <span class="job-sub"><span class="job-org">Epi-Logic Lab, University of Florida</span><span class="job-when">Oct 2025 – now</span></span>
+          </button>
+          <div class="job-more"><p class="kind">Research</p><p class="what">Building Python pipelines that process clinical genomic data on UF's HiPerGator cluster, and the k-mer datasets and models behind our antibiotic resistance classification work.</p></div>
+        </li>
+        <li class="job">
+          <button class="job-btn" type="button" aria-controls="job-detail">
+            <span class="job-title">Founder and solo developer</span>
+            <span class="job-sub"><span class="job-org">Pod</span><span class="job-when">Dec 2025 – now</span></span>
+          </button>
+          <div class="job-more"><p class="kind">Founder</p><p class="what">Designed, built, and launched a real-time group planning app for iOS, from live GPS sharing and push notifications to four rounds of App Store review and over-the-air production updates.</p></div>
+        </li>
+        <li class="job">
+          <button class="job-btn" type="button" aria-controls="job-detail">
+            <span class="job-title">Teaching assistant, Senior Capstone Design</span>
+            <span class="job-sub"><span class="job-org">UF Computer Engineering</span><span class="job-when">Aug 2025 – now</span></span>
+          </button>
+          <div class="job-more"><p class="kind">Teaching</p><p class="what">Mentoring four hardware and software teams at a time with design reviews, debugging help, and weekly presentation coaching. Teams have built an ASL-teaching robotic hand, now partnered with Notre Dame researchers, and a stacked microgreen grower. One team published a research paper.</p></div>
+        </li>
+        <li class="job">
+          <button class="job-btn" type="button" aria-controls="job-detail">
+            <span class="job-title">Founding officer and External VP</span>
+            <span class="job-sub"><span class="job-org">Embodied Intelligence Group, UF's robotics club</span><span class="job-when">July 2026 – now</span></span>
+          </button>
+          <div class="job-more"><p class="kind">Leadership</p><p class="what">Running outreach with companies for funding and mentorship, which landed two hardware sponsors who donated servos and Arduino Nanos. I also lead workshops and work on the ML team training robotic arms to do tasks.</p></div>
+        </li>
+        <li class="job">
+          <button class="job-btn" type="button" aria-controls="job-detail">
+            <span class="job-title">Software automation engineer</span>
+            <span class="job-sub"><span class="job-org">UF Computer and Information Science and Engineering</span><span class="job-when">Mar 2025 – now</span></span>
+          </button>
+          <div class="job-more"><p class="kind">Engineering</p><p class="what">Built the survey, routing, and email automation behind the UF and Kyoto study abroad exchange, cutting manual data entry by 98%.</p></div>
+        </li>
+        </ol>
+        <article class="job-detail" id="job-detail" aria-live="polite"></article>
+      </div>
     </div>
   </section>
 
-  <section class="end" id="contact" aria-labelledby="contact-title">
+  <section class="end screen" id="contact" aria-labelledby="contact-title">
     <div class="wrap end-inner reveal">
       <p class="eyebrow">Contact</p>
       <h2 class="big" id="contact-title">Say <em>hi</em></h2>
@@ -609,11 +640,49 @@
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Nav gets a soft blurred background once you scroll past the top.
+  // ---------- Scroll scene ----------
+  // The name starts big in the middle and shrinks up into the nav as you scroll, where it
+  // keeps animating. The mountain stays put; a blurred, tinted copy fades in behind the content.
   const nav = document.getElementById('nav');
-  const onScroll = () => nav.classList.toggle('scrolled', scrollY > 40);
+  const wrap = document.getElementById('name-wrap');
+  const note = document.getElementById('name-note');
+  const cue = document.getElementById('scroll-cue');
+  const frame = document.querySelector('.frame');
+  const dim = document.getElementById('sky-dim');
+  const blur = document.querySelector('.sky .blur');
+  const NAME_SHARE = 767 / 1920; // how much of the drawing's width the words "Minh Tran" take up
+  const clamp01 = v => Math.min(1, Math.max(0, v));
+  const ease = t => 1 - Math.pow(1 - t, 3);
+  let corners = null, ticking = false;
+  function scene() {
+    ticking = false;
+    const vh = innerHeight, vw = innerWidth, y = scrollY;
+    const t = ease(clamp01(y / (vh * 0.6)));   // 0 at the top, 1 once the name is docked
+    const narrow = vw <= 900;
+    const navH = nav.offsetHeight;
+    const docked = narrow ? Math.min(76, vw * 0.2) : 104; // width of the words when docked
+    const s = 1 + (docked / (wrap.offsetWidth * NAME_SHARE) - 1) * t;
+    // docked spot: centered in the nav on desktop; on phones, at the left, beside the links
+    const tx = narrow ? 16 + docked / 2 : vw / 2;
+    const top = parseFloat(getComputedStyle(nav).paddingTop) || 0; // safe area on notched phones
+    const dx = (tx - vw / 2) * t, dy = (top + (navH - top) / 2 - vh / 2) * t;
+    wrap.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${s})`;
+    wrap.classList.toggle('docked', t > 0.98);
+    const fade = String(clamp01(1 - t * 1.8));
+    note.style.opacity = fade; cue.style.opacity = fade;
+    corners = corners || frame.querySelector('.boil-corners');
+    if (corners) corners.style.opacity = fade;
+    nav.classList.toggle('scrolled', t > 0.9);
+    // backdrop: blur and tint come in as the first section rises up
+    const d = String(clamp01((y - vh * 0.35) / (vh * 0.55)));
+    dim.style.opacity = d; blur.style.opacity = d;
+  }
+  const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(scene); } };
   addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
+  addEventListener('resize', onScroll, { passive: true });
+  scene();
+  // Click the docked name to go back to the top.
+  wrap.addEventListener('click', () => { if (wrap.classList.contains('docked')) scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); });
 
   // Fade sections up as they come into view.
   const reveals = document.querySelectorAll('.reveal');
@@ -625,20 +694,39 @@
     reveals.forEach(el => io.observe(el));
   }
 
-  // Experience: the timeline line fills in as you scroll through it.
+  // Experience: pick a role (click, or hover with a mouse) to show it in the detail card.
+  // The sunset line fills down to the selected role.
   const timeline = document.getElementById('timeline');
-  if (!reduce) {
-    let ticking = false;
+  const jobs = [...timeline.querySelectorAll('.job')];
+  const detail = document.getElementById('job-detail');
+  let picked = -1, swapTimer;
+  function el(tag, cls, text) { const e = document.createElement(tag); e.className = cls; e.textContent = text; return e; }
+  function pick(i) {
+    if (i === picked) return;
+    picked = i;
+    jobs.forEach((j, k) => { j.classList.toggle('active', k === i); j.querySelector('.job-btn').setAttribute('aria-pressed', k === i ? 'true' : 'false'); });
+    const j = jobs[i];
     const fill = () => {
-      ticking = false;
-      const r = timeline.getBoundingClientRect();
-      const p = Math.min(1, Math.max(0, (innerHeight * 0.65 - r.top) / r.height));
-      timeline.style.setProperty('--progress', p.toFixed(3));
+      detail.replaceChildren(
+        el('p', 'kind', j.querySelector('.kind').textContent),
+        el('h3', '', j.querySelector('.job-title').textContent),
+        el('p', 'where', j.querySelector('.job-org').textContent),
+        el('p', 'when', j.querySelector('.job-when').textContent),
+        el('p', 'what', j.querySelector('.what').textContent));
+      detail.classList.remove('swap');
     };
-    addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(fill); } }, { passive: true });
-    addEventListener('resize', fill, { passive: true });
-    fill();
+    clearTimeout(swapTimer);
+    if (detail.childElementCount && !reduce) { detail.classList.add('swap'); swapTimer = setTimeout(fill, 180); } else fill();
+    const line = timeline.offsetHeight - 44; // the line runs from 22px below the top to 22px above the bottom
+    timeline.style.setProperty('--progress', Math.min(1, Math.max(0, (j.offsetTop + j.offsetHeight / 2 - 22) / line)).toFixed(3));
   }
+  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  jobs.forEach((j, i) => {
+    j.querySelector('.job-btn').addEventListener('click', () => pick(i));
+    if (fine) j.addEventListener('mouseenter', () => pick(i));
+  });
+  pick(0);
+  addEventListener('resize', () => { const i = picked; picked = -1; pick(i); }, { passive: true });
 
   // ---------- Projects carousel ----------
   const viewport = document.getElementById('viewport');

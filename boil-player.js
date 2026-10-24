@@ -173,14 +173,15 @@
       }
     }
     function size() {
-      const r = canvas.getBoundingClientRect();
-      if (!r.width) return;
+      // Layout size, not on-screen size, so a CSS scale (like the page shrinking the name
+      // into the nav) doesn't drop the drawing's resolution.
+      const cssW = canvas.offsetWidth;
+      if (!cssW) return;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const cw = Math.max(1, Math.round(r.width * dpr)), ch = Math.max(1, Math.round(cw * H / W));
+      const cw = Math.max(1, Math.round(cssW * dpr)), ch = Math.max(1, Math.round(cw * H / W));
       let changed = canvas.width !== cw || canvas.height !== ch;
       if (ov) {
-        const o = ov.getBoundingClientRect();
-        const ow = Math.max(1, Math.round(o.width * dpr)), oh = Math.max(1, Math.round(o.height * dpr));
+        const ow = Math.max(1, Math.round(ov.offsetWidth * dpr)), oh = Math.max(1, Math.round(ov.offsetHeight * dpr));
         if (ov.width !== ow || ov.height !== oh) { ov.width = ow; ov.height = oh; changed = true; }
       }
       if (!changed) return;
