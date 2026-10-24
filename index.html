@@ -138,7 +138,7 @@
 
   .strip {
     width: 100%; max-width: 1360px; margin: 24px auto 0; padding: 0 var(--pad);
-    display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px;
+    display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px;
   }
   .strip button {
     all: unset; box-sizing: border-box; cursor: pointer; min-height: 52px; padding: 10px 14px;
@@ -193,7 +193,7 @@
     .slide { grid-template-columns: minmax(0, 1fr); row-gap: 14px; }
     .slide-head, .credits > div:nth-child(n) { grid-column: 1; grid-row: auto; }
     .slide h3 { font-size: clamp(44px, 13vw, 72px); }
-    .strip { grid-template-columns: repeat(5, minmax(120px, 1fr)); overflow-x: auto; padding-bottom: 6px; }
+    .strip { grid-template-columns: repeat(6, minmax(120px, 1fr)); overflow-x: auto; padding-bottom: 6px; }
   }
   @media (max-width: 560px) {
     /* Set this to where the otter sits in the GIF, e.g. 62% 50% */
@@ -250,7 +250,7 @@
     .credits > div:first-child .label { display: none; }
     .credits > div:nth-child(n+2) .label, .credits > div:nth-child(n+2) p { display: inline; font-size: 15px; }
     .credits > div:nth-child(n+2) .label { margin-right: 6px; }
-    .strip { grid-template-columns: repeat(5, minmax(0, 1fr)); overflow: visible; margin-top: 14px; gap: 6px; padding-bottom: 0; }
+    .strip { grid-template-columns: repeat(6, minmax(0, 1fr)); overflow: visible; margin-top: 14px; gap: 6px; padding-bottom: 0; }
     .strip button { min-height: 0; padding: 0; height: 14px; }
     .strip .n, .strip .t { display: none; }
   }
@@ -299,7 +299,7 @@
         <h2 class="section">Projects</h2>
       </div>
       <div class="controls">
-        <span class="count" id="count" aria-live="polite">1 of 5</span>
+        <span class="count" id="count" aria-live="polite">1 of 6</span>
         <button class="arrow prev" type="button" id="prev" aria-label="Previous project">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 L8 12 L15 19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
@@ -312,7 +312,7 @@
     <div class="viewport" id="viewport">
       <div class="track" id="track">
 
-        <article class="slide" aria-roledescription="slide" aria-label="1 of 5: Mocean">
+        <article class="slide" aria-roledescription="slide" aria-label="1 of 6: Mocean">
           <div class="media">
             <video muted loop playsinline preload="none" poster="mocean.webp"><source src="mocean.mp4" type="video/mp4"></video>
           </div>
@@ -327,7 +327,7 @@
           </div>
         </article>
 
-                <article class="slide" aria-roledescription="slide" aria-label="3 of 5: Pod">
+        <article class="slide" aria-roledescription="slide" aria-label="2 of 6: Pod">
           <div class="media">
             <video muted loop playsinline preload="none" poster="pod.webp"><!-- <source src="pod-demo.mp4" type="video/mp4"> --></video>
           </div>
@@ -342,7 +342,22 @@
           </div>
         </article>
 
-        <article class="slide" aria-roledescription="slide" aria-label="2 of 5: Mycelium">
+        <article class="slide" aria-roledescription="slide" aria-label="3 of 6: InkBuddy">
+          <div class="media">
+            <video muted loop playsinline preload="none" poster="inkbuddy.webp"><source src="inkbuddy.mp4" type="video/mp4"></video>
+          </div>
+          <div class="slide-head">
+            <h3>InkBuddy</h3>
+            <p class="hand">built at SwampHacks</p>
+          </div>
+          <div class="credits">
+            <div><p class="label">What it is</p><p>Handwritten notes with an AI tutor that writes back on the page. Lasso a problem and it circles the wrong step and explains why in the margin, in ink you can move and resize.</p></div>
+            <div><p class="label">Built with</p><p>React Native, Expo, Skia, Claude API, Supabase</p></div>
+            <div><p class="label">Where to see it</p><p><a href="https://inkbuddy-site.vercel.app" target="_blank" rel="noopener">inkbuddy-site.vercel.app</a></p></div>
+          </div>
+        </article>
+
+        <article class="slide" aria-roledescription="slide" aria-label="4 of 6: Mycelium">
           <div class="media">
             <video muted loop playsinline preload="none" poster="mycelium.png"><!-- <source src="mycelium-demo.mp4" type="video/mp4"> --></video>
           </div>
@@ -359,7 +374,7 @@
 
 
 
-        <article class="slide" aria-roledescription="slide" aria-label="4 of 5: Antibiotic resistance predictor">
+        <article class="slide" aria-roledescription="slide" aria-label="5 of 6: Antibiotic resistance predictor">
           <div class="media">
             <video muted loop playsinline preload="none" poster="microbe.webp"><!-- <source src="resistance-viz.mp4" type="video/mp4"> --></video>
           </div>
@@ -374,7 +389,7 @@
           </div>
         </article>
 
-        <article class="slide" aria-roledescription="slide" aria-label="5 of 5: Kyoto exchange pipeline">
+        <article class="slide" aria-roledescription="slide" aria-label="6 of 6: Kyoto exchange pipeline">
           <div class="media">
             <video muted loop playsinline preload="none" poster="japan.webp"><!-- <source src="kyoto-pipeline.mp4" type="video/mp4"> --></video>
           </div>
@@ -395,9 +410,10 @@
     <div class="strip" id="strip" aria-label="Jump to a project">
       <button type="button"><span class="n">1</span><span class="t">Mocean</span></button>
       <button type="button"><span class="n">2</span><span class="t">Pod</span></button>
-      <button type="button"><span class="n">3</span><span class="t">Mycelium</span></button>
-      <button type="button"><span class="n">4</span><span class="t">Resistance predictor</span></button>
-      <button type="button"><span class="n">5</span><span class="t">Kyoto pipeline</span></button>
+      <button type="button"><span class="n">3</span><span class="t">InkBuddy</span></button>
+      <button type="button"><span class="n">4</span><span class="t">Mycelium</span></button>
+      <button type="button"><span class="n">5</span><span class="t">Resistance predictor</span></button>
+      <button type="button"><span class="n">6</span><span class="t">Kyoto pipeline</span></button>
     </div>
   </section>
 
@@ -407,7 +423,7 @@
         <h2 class="section">About me</h2>
         <div class="about-copy">
           <p>I'm Minh, a computer science student at the University of Florida, graduating December 2027.</p>
-          <p>Most of my projects start the same way: I notice something that should exist, then I build it and ship it. That's how Pod, Mycelium, and Mocean happened.</p>
+          <p>Most of my projects start the same way: I notice something that should exist, then I build it and ship it. That's how Pod, InkBuddy, Mycelium, and Mocean happened.</p>
           <p>Away from the keyboard, I'm an ocean person. I watch a lot of wildlife documentaries and care about conservation. My favorite work is where tech and the natural world meet.</p>
         </div>
         <dl class="roll">
@@ -492,6 +508,7 @@
       <div class="links">
         <a href="https://www.linkedin.com/in/minhtran605/" target="_blank" rel="noopener">LinkedIn</a>
         <a href="https://podplananything.com" target="_blank" rel="noopener">Pod</a>
+        <a href="https://inkbuddy-site.vercel.app" target="_blank" rel="noopener">InkBuddy</a>
         <a href="https://www.getmycelium.net/" target="_blank" rel="noopener">Mycelium</a>
       </div>
     </div>
@@ -526,7 +543,7 @@
   let cur = 0, onScreen = false, dragX = 0;
 
   const rel = new Array(n).fill(null);
-  // Signed distance from the centered slide, wrapping both ways: with 5 slides, -2..2.
+  // Signed distance from the centered slide, wrapping both ways: with 6 slides, -2..3.
   function relOf(k) { let r = ((k - cur) % n + n) % n; if (r > n / 2) r -= n; return r; }
   function place(extra) {
     const w = slides[0].offsetWidth;
