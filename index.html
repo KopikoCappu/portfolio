@@ -4,276 +4,331 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Minh Tran</title>
-<meta name="description" content="Minh Tran, computer science student at the University of Florida. Apps, ML research, and developer tools.">
+<meta name="description" content="Minh Tran, computer science and economics student at the University of Florida. Apps, ML research, and developer tools.">
+<meta name="theme-color" content="#11131b">
 <link rel="icon" href="headshot.webp">
 <link rel="preload" href="project.json" as="fetch" crossorigin fetchpriority="high">
 <script src="boil-player.js" defer fetchpriority="high"></script>
-<link rel="preload" as="image" href="mountain.jpg">
+<link rel="preload" as="image" href="mountain.webp" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Hanken+Grotesk:wght@400;500;600&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
 <!-- Vercel Web Analytics: the script is served by Vercel once Analytics is enabled for the project -->
 <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
 <script defer src="/_vercel/insights/script.js"></script>
+<script>document.documentElement.classList.add('js');</script>
 <style>
+  /* Palette sampled from mountain.webp: dusk navy floor, mist blue, sky, haze, peach clouds, rust ridges.
+     Cream ink matches the strokes in the hand-drawn name. */
   :root {
-    --bg: #0f1211;
-    --panel: #1c2a24;
-    --ink: #ece4d4;
-    --dim: #c9c2b2;
-    --dim-2: #a29c8e;
-    --line: #26332d;
-    --amber: #cfae84;
-    --note: #9fcab9;
-    --pad: clamp(16px, 3vw, 40px);
-    --display: "Big Shoulders Display", Impact, "Arial Narrow", sans-serif;
+    --bg: #11131b;
+    --bg-2: #181a25;
+    --bg-3: #222433;
+    --ink: #fbf3e4;
+    --dim: #d4cdc8;
+    --dim-2: #9a98a6;
+    --line: rgba(173, 193, 188, .12);
+    --peach: #ecbf9c;
+    --rust: #cf7a52;
+    --sky: #93bccb;
+    --mist: #49556b;
+    --pad: clamp(20px, 5vw, 64px);
+    --wide: 1240px;
+    --serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
     --hand: "Nanum Pen Script", "Bradley Hand", cursive;
-    /* active slide width: wide, but short enough that its title stays on screen */
-    --slide-w: max(240px, min(62vw, 1000px, calc((100vh - 490px) * 1.778)));
-    --slide-w: max(240px, min(62vw, 1000px, calc((100svh - 490px) * 1.778)));
-    --gap: 28px;
+    --ease: cubic-bezier(.22, 1, .36, 1);
+    /* carousel: one project at a time, with wide empty margins on both sides for the arrows */
+    --gutter: clamp(100px, 14vw, 240px);
+    --slide-w: min(1080px, calc(100vw - 2 * var(--gutter)));
   }
   *, *::before, *::after { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; scroll-padding-top: 72px; }
   body {
     margin: 0; background: var(--bg); color: var(--ink);
-    font: 18px/1.6 "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font: 18px/1.65 "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
     -webkit-font-smoothing: antialiased; overflow-x: hidden;
   }
   a { color: inherit; }
-  a:hover { color: var(--amber); }
-  :focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--peach); outline-offset: 4px; border-radius: 4px; }
+  img { max-width: 100%; }
   .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  .hand { font-family: var(--hand); color: var(--note); line-height: 1; font-weight: 400; text-shadow: 0 1px 10px rgba(0,0,0,.45); }
-  .display { font-family: var(--display); text-transform: uppercase; }
-  .label { color: var(--dim-2); font-size: 15px; margin: 0 0 4px; }
+  .hand { font-family: var(--hand); color: var(--sky); line-height: 1; font-weight: 400; }
+  .wrap { width: 100%; max-width: var(--wide); margin: 0 auto; padding: 0 var(--pad); }
+
+  /* ---------- nav ---------- */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    padding: calc(18px + env(safe-area-inset-top, 0px)) var(--pad) 18px;
+    font-weight: 500; font-size: 15px;
+    transition: background .4s ease, padding .4s var(--ease), box-shadow .4s ease;
+  }
+  .nav.scrolled {
+    background: rgba(17, 19, 27, .72); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    padding-top: calc(12px + env(safe-area-inset-top, 0px)); padding-bottom: 12px;
+    box-shadow: 0 1px 0 var(--line);
+  }
+  .nav .mark { font-family: var(--serif); font-size: 26px; line-height: 1; text-decoration: none; }
+  .nav ul { list-style: none; display: flex; gap: clamp(18px, 3vw, 36px); margin: 0; padding: 0; }
+  .nav ul a { text-decoration: none; opacity: .85; transition: opacity .2s; }
+  .nav ul a:hover { opacity: 1; }
+  .nav:not(.scrolled) { text-shadow: 0 1px 12px rgba(14, 16, 26, .45); }
 
   /* ---------- hero ---------- */
-  .top { position: relative; }
-  .nav {
-    position: absolute; top: 0; left: 0; right: 0; z-index: 2;
-    display: flex; justify-content: space-between; align-items: center; gap: 16px;
-    padding: calc(20px + env(safe-area-inset-top, 0px)) var(--pad) 0;
-    font-weight: 500; font-size: 15px; text-shadow: 0 1px 10px rgba(0,0,0,.55);
-  }
-  .nav .mark { font-family: var(--display); font-weight: 800; font-size: 22px; text-decoration: none; letter-spacing: 0.02em; }
-  .nav ul { list-style: none; display: flex; gap: clamp(18px, 3vw, 32px); margin: 0; padding: 0; }
-  .nav ul a { text-decoration: none; }
   .frame {
-    position: relative; height: 100vh; height: 100svh; min-height: 520px; overflow: hidden;
-    display: flex; flex-direction: column; justify-content: space-between;
-    padding: calc(76px + env(safe-area-inset-top, 0px)) var(--pad) calc(24px + env(safe-area-inset-bottom, 0px));
-    background: var(--panel); isolation: isolate;
+    position: relative; height: 100vh; height: 100svh; min-height: 560px; overflow: hidden;
+    display: grid; place-items: center; isolation: isolate; background: var(--bg-2);
   }
-  /* --focus: the part of the GIF that must stay visible when the screen crops it (x% y%) */
-  .frame-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--focus, 50% 50%); z-index: -2; }
-  .frame { --focus: 50% 45%; }
+  /* --focus: the part of the photo that must stay visible when the screen crops it (x% y%) */
+  .frame-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--focus, 50% 42%); z-index: -2; }
+  /* Darken the top for the nav, and melt the bottom into the page color */
   .frame::after {
     content: ""; position: absolute; inset: 0; z-index: -1;
-    background: linear-gradient(180deg, rgba(0,0,0,.4), rgba(0,0,0,0) 24%, rgba(0,0,0,0) 70%, rgba(15,18,17,.7) 100%);
+    background:
+      radial-gradient(ellipse 55% 38% at 50% 50%, rgba(30, 18, 26, .36), transparent 70%),
+      linear-gradient(180deg, rgba(14, 16, 26, .36), rgba(14, 16, 26, 0) 22%, rgba(17, 19, 27, 0) 64%, rgba(17, 19, 27, .72) 87%, var(--bg) 100%);
   }
-  .frame-row { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 15px; font-weight: 500; color: #f4efe6; font-variant-numeric: tabular-nums; text-shadow: 0 1px 2px rgba(0,0,0,.7), 0 2px 14px rgba(0,0,0,.55); }
-  .title-card { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .title-card .by { margin: 0; font-size: 16px; color: #e4ded2; text-shadow: 0 1px 8px rgba(0,0,0,.6); }
-  .name-wrap { position: relative; width: min(80vw, 1000px); }
-  .name { display: block; width: 100%; filter: drop-shadow(0 2px 16px rgba(0,0,0,.35)); }
+  .title-card { display: flex; flex-direction: column; align-items: center; padding: 0 var(--pad); }
+  .name-wrap { position: relative; width: min(70vw, 900px); }
+  .name { display: block; width: 100%; filter: drop-shadow(0 2px 3px rgba(40, 18, 24, .45)) drop-shadow(0 6px 28px rgba(30, 14, 22, .55)); }
   /* Corner text from the drawing (CS + Econ, UF 2027), pinned to the hero's corners.
      Change these insets to move it: top, left/right, bottom. */
   .boil-corners {
     position: absolute; z-index: 0; pointer-events: none;
-    --corner-top: calc(116px + env(safe-area-inset-top, 0px));
-    --corner-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+    --corner-top: calc(92px + env(safe-area-inset-top, 0px));
+    --corner-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
     top: var(--corner-top); left: var(--pad);
     width: calc(100% - 2 * var(--pad)); height: calc(100% - var(--corner-top) - var(--corner-bottom));
-    filter: drop-shadow(0 2px 16px rgba(0,0,0,.35));
+    filter: drop-shadow(0 2px 3px rgba(40, 18, 24, .45)) drop-shadow(0 6px 24px rgba(30, 14, 22, .5));
   }
   .name-note {
     position: absolute; right: -14%; top: 4%; margin: 0; display: flex; gap: 6px; align-items: flex-start;
-    font-size: 30px; transform: rotate(4deg); white-space: nowrap; text-shadow: 0 1px 10px rgba(0,0,0,.5);
+    font-size: 30px; color: var(--ink); transform: rotate(4deg); white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(40, 18, 24, .5), 0 2px 14px rgba(30, 14, 22, .55);
   }
+  .scroll-cue {
+    position: absolute; left: 50%; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); text-decoration: none;
+  }
+  .scroll-cue span { width: 1px; height: 34px; background: linear-gradient(var(--dim), transparent); animation: cue 2.4s var(--ease) infinite; transform-origin: top; }
+  @keyframes cue { 0% { transform: scaleY(0); opacity: 1; } 60% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
 
-  /* ---------- reel ---------- */
-  .reel {
-    min-height: 100vh; min-height: 100svh; padding: 40px 0 32px;
-    display: flex; flex-direction: column; justify-content: center;
-  }
-  .reel-head {
-    width: 100%; max-width: 1360px; margin: 0 auto 20px; padding: 0 var(--pad);
-    display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px;
-  }
-  .reel-head .hand { margin: 0 0 4px; font-size: 30px; transform: rotate(-2deg); transform-origin: left; }
-  h2.section { margin: 0; font-family: var(--display); font-weight: 800; font-size: 40px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); line-height: 1.1; }
-  .reel-head h2.section { font-size: 34px; }
-  .controls { display: flex; align-items: center; gap: 12px; }
-  .count { font-size: 15px; color: var(--dim); font-variant-numeric: tabular-nums; min-width: 7.5em; text-align: right; }
-  .arrow {
-    width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
-    border: 1px solid #34443c; background: #141b18; color: var(--ink);
-  }
-  .arrow.next { background: var(--amber); border-color: var(--amber); color: var(--bg); }
-  .arrow svg { width: 22px; height: 22px; }
+  /* ---------- section heads ---------- */
+  section { position: relative; }
+  .sec-head { display: flex; flex-direction: column; gap: 14px; margin-bottom: clamp(56px, 8vw, 104px); }
+  .eyebrow { margin: 0; display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--peach); }
+  .eyebrow::before { content: ""; width: 28px; height: 1px; background: currentColor; opacity: .7; }
+  .sec-title { margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(46px, 6.4vw, 92px); line-height: 1; letter-spacing: -0.015em; }
+  .sec-title em { font-style: italic; color: var(--peach); }
+  .sec-head .hand { margin: 4px 0 0; font-size: 30px; transform: rotate(-2deg); transform-origin: left; }
 
-  /* All slides share one grid cell, so the reel is exactly as tall as one slide.
-     JS slides each one left or right of the centered one, wrapping around both ways. */
-  .viewport { overflow: hidden; touch-action: pan-y; cursor: grab; display: grid; }
+  /* ---------- work (carousel) ---------- */
+  .work { padding: clamp(96px, 12vw, 150px) 0 clamp(96px, 12vw, 150px); overflow: hidden; isolation: isolate; }
+  .work-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-bottom: clamp(48px, 6vw, 80px); }
+  .work-head .sec-head { margin-bottom: 0; }
+  .count { font-size: 15px; color: var(--dim-2); font-variant-numeric: tabular-nums; letter-spacing: .06em; padding-bottom: 10px; }
+  .count b { color: var(--peach); font-weight: 600; }
+
+  .stage { position: relative; }
+  /* --peek-gap: space between the active project and the edge of the ones peeking in */
+  .viewport { --peek-gap: 110px; overflow: hidden; touch-action: pan-y; cursor: grab; display: grid; padding: 30px 0 60px; margin: -30px 0 -60px; }
   .viewport.dragging { cursor: grabbing; }
   .track { display: contents; }
+  /* All slides share one grid cell, so the reel is exactly as tall as the tallest one.
+     JS moves the centered one in and the rest off to the sides, wrapping around both ways. */
   .slide {
     grid-area: 1 / 1; justify-self: center; width: var(--slide-w);
-    /* media on top, then title | story | details side by side to keep the reel short */
-    display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.35fr) minmax(0, .9fr);
-    column-gap: 28px; row-gap: 10px; align-content: start;
-    opacity: 0; visibility: hidden; transform-origin: center top; will-change: transform;
-    transition: transform .6s cubic-bezier(.22, 1, .36, 1), opacity .45s ease, visibility .45s;
+    display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(20px, 3vw, 40px); align-items: center;
+    opacity: 0; visibility: hidden; will-change: transform;
+    transition: transform .7s var(--ease), opacity .5s ease, visibility .5s;
   }
-  .slide.is-side { opacity: .4; visibility: visible; cursor: pointer; }
+  .slide.is-side { visibility: visible; opacity: .4; cursor: pointer; }
+  .slide.is-side:hover { opacity: .65; }
   .slide.is-active { opacity: 1; visibility: visible; }
   .viewport.dragging .slide { transition: none; }
-  .media {
-    grid-column: 1 / -1; margin-bottom: 8px;
-    position: relative; aspect-ratio: 16 / 9; border-radius: 6px; overflow: hidden;
-    background: var(--panel); border: 1px solid transparent; transition: border-color .4s;
+  .p-media {
+    grid-column: 1 / 8; position: relative; aspect-ratio: 16 / 9; border-radius: 22px; overflow: hidden;
+    background: var(--bg-3); box-shadow: 0 40px 90px -40px rgba(0, 0, 0, .8), 0 0 0 1px var(--line);
   }
-  .slide.is-active .media { border-color: var(--amber); }
-  .media video, .media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .p-body { grid-column: 9 / 13; transition: opacity .5s ease .1s, transform .6s var(--ease) .1s; }
+  .slide:not(.is-active) .p-body { opacity: 0; transform: translateY(10px); transition-delay: 0s; }
+  .p-media img, .p-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; transition: transform 1.2s var(--ease); }
+  .slide.is-active .p-media:hover img, .slide.is-active .p-media:hover video { transform: scale(1.025); }
   /* The image is always there; the video fades in on top only once it is actually playing. */
-  .media video { opacity: 0; transition: opacity .35s ease; }
-  .media video.on { opacity: 1; }
-  .slide-head { grid-column: 1; grid-row: 2 / span 2; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
-  .slide h3 { margin: 0; font-family: var(--display); font-weight: 900; font-size: clamp(36px, calc(var(--slide-w) * 0.075), 84px); line-height: .88; text-transform: uppercase; color: var(--amber); }
-  .slide-head .hand { margin: 0; font-size: 28px; transform: rotate(-2deg); transform-origin: left; }
-  .credits { display: contents; }
-  .credits > div { font-size: 15px; line-height: 1.5; transition: opacity .4s; }
-  .credits > div:nth-child(1) { grid-column: 2; grid-row: 2 / span 2; }
-  .credits > div:nth-child(2) { grid-column: 3; grid-row: 2; }
-  .credits > div:nth-child(3) { grid-column: 3; grid-row: 3; }
-  .credits p { margin: 0; }
-  .slide:not(.is-active) .credits > div, .slide:not(.is-active) .slide-head .hand { opacity: 0; }
+  /* screenshots that aren't 16:9 are shown whole instead of cropped */
+  .p-media.contain { background: #000; }
+  .p-media.contain img { object-fit: contain; }
+  .p-media video { opacity: 0; transition: opacity .5s ease, transform 1.2s var(--ease); }
+  .p-media video.on { opacity: 1; }
+  .slide h3 { margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(40px, 4.4vw, 64px); line-height: 1; letter-spacing: -0.01em; }
+  .p-body .hand { margin: 10px 0 0; font-size: 28px; transform: rotate(-2deg); transform-origin: left; }
+  .p-desc { margin: 24px 0 0; color: var(--dim); font-size: 17px; line-height: 1.7; }
+  .tags { list-style: none; margin: 24px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .tags li { padding: 5px 13px; border-radius: 999px; border: 1px solid rgba(147, 188, 203, .2); background: rgba(147, 188, 203, .07); font-size: 13.5px; color: var(--dim); }
+  .p-link {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 28px; font-weight: 500; font-size: 16px;
+    color: var(--peach); text-decoration: none; border-bottom: 1px solid rgba(236, 191, 156, .35); padding-bottom: 2px; transition: border-color .25s, gap .25s var(--ease);
+  }
+  .p-link:hover { border-color: var(--peach); gap: 12px; }
+  .p-link svg { width: 14px; height: 14px; }
+  .p-where { margin-top: 28px; font-size: 15px; color: var(--dim-2); }
+
+  /* arrows float in the empty side margins, level with the middle of the slide */
+  .arrow {
+    position: absolute; top: 50%; z-index: 2; width: 56px; height: 56px; margin-top: -28px; border-radius: 50%;
+    display: grid; place-items: center; cursor: pointer; color: var(--ink);
+    border: 1px solid var(--line); background: rgba(24, 26, 37, .6); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    transition: background .25s, border-color .25s, color .25s, transform .25s var(--ease);
+  }
+  .arrow:hover { background: var(--peach); border-color: var(--peach); color: var(--bg); }
+  .arrow.prev { left: calc((var(--gutter) - 56px) / 2); }
+  .arrow.next { right: calc((var(--gutter) - 56px) / 2); }
+  .arrow.prev:hover { transform: translateX(-3px); }
+  .arrow.next:hover { transform: translateX(3px); }
+  .arrow svg { width: 22px; height: 22px; }
 
   .strip {
-    width: 100%; max-width: 1360px; margin: 24px auto 0; padding: 0 var(--pad);
-    display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px;
+    display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px;
+    width: var(--slide-w); margin: clamp(48px, 6vw, 72px) auto 0;
   }
   .strip button {
-    all: unset; box-sizing: border-box; cursor: pointer; min-height: 52px; padding: 10px 14px;
-    border-top: 3px solid #2c3a33; display: flex; flex-direction: column; gap: 2px; transition: border-color .3s;
+    all: unset; box-sizing: border-box; cursor: pointer; padding: 14px 2px 0;
+    border-top: 2px solid var(--line); display: flex; flex-direction: column; gap: 2px; transition: border-color .3s;
   }
-  .strip button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
-  .strip .n { font-size: 13px; color: var(--dim-2); }
-  .strip .t { font-size: 16px; font-weight: 600; color: var(--dim); }
-  .strip button[aria-current="true"] { border-top-color: var(--amber); }
+  .strip button:hover { border-top-color: rgba(236, 191, 156, .45); }
+  .strip button:focus-visible { outline: 2px solid var(--peach); outline-offset: 4px; }
+  .strip .n { font-size: 13px; color: var(--dim-2); font-variant-numeric: tabular-nums; }
+  .strip .t { font-size: 15px; font-weight: 500; color: var(--dim-2); transition: color .3s; }
+  .strip button[aria-current="true"] { border-top-color: var(--peach); }
   .strip button[aria-current="true"] .t { color: var(--ink); }
 
-  /* ---------- crew ---------- */
-  .crew { padding: clamp(80px, 10vw, 120px) var(--pad); border-top: 1px solid var(--line); }
-  .crew-inner { max-width: 1000px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 64px; align-items: center; justify-content: center; }
-  .crew-text { flex: 999 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 32px; }
-  .about-copy p { margin: 0 0 14px; font-size: 20px; line-height: 1.6; max-width: 34em; }
-  .about-copy p:first-child { font-size: 24px; font-weight: 500; }
-  .roll { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 16px 32px; font-size: 19px; margin: 0; }
-  .roll dt { color: var(--dim-2); }
-  .roll dd { margin: 0; }
-  .roll .hand { font-size: 28px; }
-  .crew-photo { flex: 1 1 240px; max-width: 260px; }
-  .crew-photo img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 4px; display: block; transform: rotate(-1.5deg); background: var(--panel); }
-  .crew-photo .hand { margin: 12px 0 0; display: flex; align-items: center; gap: 8px; font-size: 30px; }
+  /* ---------- about ---------- */
+  .about {
+    padding: clamp(96px, 12vw, 160px) 0;
+    background:
+      linear-gradient(180deg, var(--bg), var(--bg-2) 25%, var(--bg-2) 75%, var(--bg));
+  }
+  .about-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(40px, 7vw, 112px); align-items: start; }
+  .portrait { position: sticky; top: 112px; margin: 0; }
+  .portrait img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 24px; display: block; background: var(--bg-3); box-shadow: 0 40px 90px -40px rgba(0, 0, 0, .75); }
+  .portrait figcaption { margin: 16px 0 0 8px; display: flex; align-items: center; gap: 8px; font-size: 30px; }
+  .about-copy p { margin: 0 0 22px; color: var(--dim); font-size: 19px; line-height: 1.75; max-width: 34em; }
+  .about-copy p.lead { font-family: var(--serif); color: var(--ink); font-size: clamp(28px, 2.8vw, 38px); line-height: 1.25; letter-spacing: -0.005em; margin-bottom: 32px; }
+  .about-copy p.lead em { color: var(--peach); }
+  .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 40px; margin: 56px 0 0; padding: 40px 0 0; border-top: 1px solid var(--line); }
+  .facts dt { font-size: 13px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--sky); margin-bottom: 8px; }
+  .facts dd { margin: 0; font-size: 17px; line-height: 1.6; }
 
-  /* ---------- experience ---------- */
-  .exp { padding: clamp(80px, 10vw, 120px) var(--pad); border-top: 1px solid var(--line); }
-  .exp-inner { max-width: 1000px; margin: 0 auto; }
-  .exp h2.section { margin-bottom: 28px; }
-  .jobs { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-  .job { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: clamp(16px, 4vw, 48px); padding: 28px 0; border-bottom: 1px solid var(--line); }
-  .job .when { margin: 0; padding-top: 6px; color: var(--dim-2); font-size: 15px; font-variant-numeric: tabular-nums; }
-  .job h3 { margin: 0; font-size: clamp(22px, 2.4vw, 28px); font-weight: 600; letter-spacing: -0.015em; line-height: 1.2; }
-  .job .where { margin: 6px 0 10px; color: var(--amber); font-size: 16px; font-weight: 500; }
-  .job p { margin: 0; max-width: 40em; }
+  /* ---------- experience (timeline) ---------- */
+  .exp { padding: clamp(96px, 12vw, 160px) 0; }
+  .exp-grid { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(40px, 6vw, 96px); align-items: start; }
+  .exp-side { position: sticky; top: 112px; }
+  .exp-side .sec-head { margin-bottom: 44px; }
+  .stats { list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; }
+  .stats li { display: flex; align-items: center; gap: 16px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--dim); font-size: 15px; line-height: 1.4; }
+  .stats b { font-family: var(--serif); font-weight: 400; font-size: 48px; line-height: 1; color: var(--peach); min-width: 1.3em; }
+  .timeline { list-style: none; margin: 0; padding: 0 0 0 40px; position: relative; display: grid; gap: 22px; }
+  /* the line: a faint track, plus a sunset-colored fill that grows as you scroll (JS sets --progress) */
+  .timeline::before, .timeline::after { content: ""; position: absolute; left: 7px; top: 14px; bottom: 14px; width: 2px; border-radius: 2px; }
+  .timeline::before { background: var(--line); }
+  .timeline::after { background: linear-gradient(180deg, var(--peach), var(--rust) 50%, var(--sky)); transform-origin: top; transform: scaleY(var(--progress, 0)); }
+  .job {
+    position: relative; padding: 28px 32px 30px; border-radius: 20px; border: 1px solid var(--line);
+    background: linear-gradient(135deg, rgba(251, 243, 228, .05), rgba(251, 243, 228, .012));
+    transition: border-color .3s, background .3s, opacity 1s var(--ease), transform 1s var(--ease);
+  }
+  .job:hover { border-color: rgba(236, 191, 156, .35); background: linear-gradient(135deg, rgba(236, 191, 156, .08), rgba(251, 243, 228, .015)); }
+  /* the dot on the line; it lights up when the card scrolls into view */
+  .job::before {
+    content: ""; position: absolute; left: -40px; top: 34px; width: 16px; height: 16px; border-radius: 50%; z-index: 1;
+    background: var(--bg); border: 2px solid var(--mist); transition: background .6s, border-color .6s, box-shadow .6s;
+  }
+  .job.in::before { background: var(--peach); border-color: var(--peach); box-shadow: 0 0 0 6px rgba(236, 191, 156, .14); }
+  .job-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px 16px; flex-wrap: wrap; }
+  .kind { margin: 0 0 8px; font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--dim-2); }
+  .job h3 { margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(26px, 2.4vw, 34px); line-height: 1.15; }
+  .when { margin: 0; padding: 4px 12px; border-radius: 999px; background: rgba(147, 188, 203, .1); border: 1px solid rgba(147, 188, 203, .2); color: var(--sky); font-size: 13px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .job .where { margin: 8px 0 14px; color: var(--peach); font-size: 16px; font-weight: 500; }
+  .job .what { margin: 0; color: var(--dim); font-size: 16.5px; line-height: 1.7; }
 
-  /* ---------- end card ---------- */
-  .end { padding: clamp(90px, 11vw, 120px) var(--pad) calc(clamp(100px, 12vw, 140px) + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line); }
-  .end-inner { max-width: 1360px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center; }
-  .end .big { margin: 0; font-family: var(--display); font-weight: 900; font-size: clamp(90px, 12vw, 180px); line-height: .85; text-transform: uppercase; }
-  .end .sub { margin: 0; color: var(--dim); font-size: 20px; }
-  .end .mail { font-size: clamp(26px, 3.4vw, 44px); font-weight: 600; letter-spacing: -0.02em; text-decoration-color: var(--amber); text-decoration-thickness: 3px; text-underline-offset: 8px; overflow-wrap: anywhere; }
-  .end .hand { margin: 0; font-size: 30px; transform: rotate(-2deg); }
-  .end .links { display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; font-weight: 500; }
-  footer { padding: 20px var(--pad) calc(20px + env(safe-area-inset-bottom, 0px)); color: var(--dim-2); font-size: 14px; text-align: center; }
+  /* ---------- contact ---------- */
+  .end { padding: clamp(120px, 15vw, 200px) 0 clamp(140px, 16vw, 220px); overflow: hidden; isolation: isolate; }
+  .end-inner { display: flex; flex-direction: column; align-items: center; gap: 28px; text-align: center; }
+  .end .big { margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(96px, 15vw, 220px); line-height: .9; letter-spacing: -0.02em; text-shadow: 0 4px 40px rgba(14, 16, 26, .4); }
+  .end .big em { color: var(--peach); }
+  .end .sub { margin: 0; color: var(--dim); font-size: 20px; max-width: 30em; }
+  .end .mail {
+    font-size: clamp(24px, 3.2vw, 40px); font-weight: 500; letter-spacing: -0.015em; text-decoration: none; overflow-wrap: anywhere;
+    border-bottom: 2px solid rgba(236, 191, 156, .5); padding-bottom: 4px; transition: border-color .25s, color .25s;
+  }
+  .end .mail:hover { color: var(--peach); border-color: var(--peach); }
+  .end .hand { margin: -4px 0 0; font-size: 30px; transform: rotate(-2deg); }
+  .end .links { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 12px; }
+  .end .links a {
+    text-decoration: none; padding: 10px 20px; border-radius: 999px; border: 1px solid rgba(251, 243, 228, .16); background: rgba(17, 19, 27, .35);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    font-size: 15px; font-weight: 500; transition: border-color .25s, background .25s;
+  }
+  .end .links a:hover { border-color: rgba(236, 191, 156, .7); background: rgba(236, 191, 156, .12); }
+  footer { padding: 28px var(--pad) calc(28px + env(safe-area-inset-bottom, 0px)); color: var(--dim-2); font-size: 14px; text-align: center; background: #0b0d14; }
 
+  /* ---------- reveal on scroll (only when JS runs, so nothing is ever stuck hidden) ---------- */
+  .js .reveal { opacity: 0; transform: translateY(28px); transition: opacity 1s var(--ease), transform 1s var(--ease); }
+  .js .reveal.in { opacity: 1; transform: none; }
+
+  /* ---------- smaller screens ---------- */
   @media (max-width: 900px) {
-    :root { --slide-w: 82vw; --gap: 16px; }
-    .reel { min-height: 0; padding: 64px 0 48px; }
-    .name-note { position: static; justify-content: center; transform: rotate(-2deg); margin-top: 6px; font-size: 26px; white-space: normal; }
+    :root { --gutter: 9vw; }
+    .name-note { position: static; justify-content: center; transform: rotate(-2deg); margin-top: 10px; font-size: 26px; white-space: normal; text-align: center; }
     .name-note svg { display: none; }
-    .slide { grid-template-columns: minmax(0, 1fr); row-gap: 14px; }
-    .slide-head, .credits > div:nth-child(n) { grid-column: 1; grid-row: auto; }
-    .slide h3 { font-size: clamp(44px, 13vw, 72px); }
-    .strip { grid-template-columns: repeat(6, minmax(120px, 1fr)); overflow-x: auto; padding-bottom: 6px; }
+    .slide { grid-template-columns: minmax(0, 1fr); row-gap: 28px; align-items: start; }
+    .p-media, .p-body { grid-column: 1; }
+    .p-media { border-radius: 18px; }
+    /* arrows move under the slide on narrow screens */
+    .arrow { position: static; margin: 0; width: 48px; height: 48px; }
+    .arrows { display: flex; gap: 10px; width: var(--slide-w); margin: 28px auto 0; }
+    .strip { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; margin-top: 36px; }
+    .strip button { padding-top: 0; height: 12px; }
+    .strip .n, .strip .t { display: none; }
+    .about-grid { grid-template-columns: minmax(0, 1fr); }
+    .portrait { position: static; max-width: 340px; }
+    .exp-grid { grid-template-columns: minmax(0, 1fr); }
+    .exp-side { position: static; }
+    .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .stats li { flex-direction: column; gap: 6px; font-size: 14px; }
+    .stats b { font-size: 40px; }
+    .viewport { --peek-gap: 28px; }
   }
+  @media (min-width: 901px) { .arrows { display: contents; } }
   @media (max-width: 560px) {
-    /* Set this to where the otter sits in the GIF, e.g. 62% 50% */
-    .frame-bg { object-position: var(--focus-mobile, var(--focus, 50% 50%)); }
-    body { font-size: 19px; }
-    .frame-row { font-size: 16px; }
-    .name-wrap { width: 92vw; }
-    .name-note { font-size: 30px; }
-    .reel-head .hand, .slide-head .hand { font-size: 32px; }
-    .credits > div { font-size: 18px; }
-    .label { font-size: 16px; }
-    .strip .t { font-size: 17px; }
-    .about-copy p { font-size: 20px; }
-    .about-copy p:first-child { font-size: 24px; }
-    .roll { font-size: 19px; }
-    .job { grid-template-columns: 1fr; gap: 6px; }
-    .job .when { padding-top: 0; }
-    .job .where { font-size: 17px; }
-    .end .sub { font-size: 19px; }
-    .nav ul { gap: 16px; }
-    .roll { grid-template-columns: 1fr; gap: 2px; }
-    .roll dd { margin-bottom: 14px; }
-    .arrow { width: 46px; height: 46px; }
-  }
-  @media (max-height: 820px) and (min-width: 901px) {
-    .reel { padding: 20px 0 16px; }
-    .reel-head { margin-bottom: 12px; }
-    .reel-head .hand { font-size: 24px; }
-    .reel-head h2.section { font-size: 28px; }
-    .arrow { width: 44px; height: 44px; }
-    .strip { margin-top: 14px; }
-    .strip button { min-height: 44px; padding: 6px 12px; }
-    .credits > div { font-size: 14px; }
+    body { font-size: 17px; }
+    .name-wrap { width: 94vw; }
+    .nav ul { gap: 16px; font-size: 14px; }
+    .facts { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+    .sec-head .hand { font-size: 26px; }
+    .scroll-cue { display: none; }
+    .p-desc { font-size: 16px; }
+    .stats { grid-template-columns: minmax(0, 1fr); }
+    .stats li { flex-direction: row; align-items: center; }
+    .timeline { padding-left: 28px; }
+    .timeline::before, .timeline::after { left: 5px; }
+    .job { padding: 22px 20px 24px; }
+    .job::before { left: -28px; top: 28px; width: 14px; height: 14px; }
   }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    .slide, .media, .credits > div { transition: none; }
-  }
-
-    /* ---------- sizing tweaks: bigger name, one-screen sections on phones ---------- */
-  .name-wrap { width: min(70vw, 900px); }
-  @media (max-width: 560px) {
-    .name-wrap { width: 94vw; }
-    .reel { min-height: 100vh; min-height: 100svh; padding: 24px 0 18px; }
-    .reel-head { flex-wrap: nowrap; align-items: center; margin-bottom: 14px; }
-    .reel-head .hand, .count { display: none; }
-    .reel-head h2.section { font-size: 30px; }
-    .slide { row-gap: 8px; }
-    .media { margin-bottom: 4px; }
-    .slide h3 { font-size: clamp(40px, 12vw, 54px); }
-    .slide-head { gap: 6px; }
-    .slide-head .hand { font-size: 24px; }
-    .credits > div { font-size: 15px; line-height: 1.45; }
-    .credits > div:first-child .label { display: none; }
-    .credits > div:nth-child(n+2) .label, .credits > div:nth-child(n+2) p { display: inline; font-size: 15px; }
-    .credits > div:nth-child(n+2) .label { margin-right: 6px; }
-    .strip { grid-template-columns: repeat(6, minmax(0, 1fr)); overflow: visible; margin-top: 14px; gap: 6px; padding-bottom: 0; }
-    .strip button { min-height: 0; padding: 0; height: 14px; }
-    .strip .n, .strip .t { display: none; }
+    .js .reveal { opacity: 1; transform: none; transition: none; }
+    .scroll-cue span { animation: none; }
+    .slide, .p-body, .p-media img, .p-media video, .job, .job::before { transition: none; }
+    .timeline::after { transform: none; }
   }
 </style>
 </head>
 <body>
 
 <header class="top" id="top">
-  <nav class="nav" aria-label="Sections">
+  <nav class="nav" id="nav" aria-label="Sections">
     <a class="mark" href="#top" aria-label="Minh Tran, back to top">MT</a>
     <ul>
       <li><a href="#work">Work</a></li>
@@ -283,238 +338,258 @@
     </ul>
   </nav>
   <div class="frame">
-    <img class="frame-bg" src="mountain.jpg" alt="">
-    <div class="frame-row" aria-hidden="true">
-      <span></span>
-    </div>
+    <img class="frame-bg" src="mountain.webp" alt="" fetchpriority="high">
     <div class="title-card">
       <h1 class="sr-only">Minh Tran</h1>
       <div class="name-wrap">
-        <canvas class="name" data-boil="project.json" data-boil-fit="content" data-boil-corners=".frame" aria-label="Minh Tran, handwritten"></canvas>
+        <canvas class="name" data-boil="project.json" data-boil-corners=".frame" aria-label="Minh Tran, handwritten"></canvas>
         <p class="name-note hand" aria-hidden="true">
           <svg width="46" height="30" viewBox="0 0 46 30"><path d="M42 6 C 30 4, 16 10, 6 24 M6 24 L 8 13 M6 24 L 17 21" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
           <span>hand drawn using custom built <br> open source animation program</span>
         </p>
       </div>
     </div>
-    <div class="frame-row">
-      <span></span>
-      <span></span>
-    </div>
+    <a class="scroll-cue" href="#work" aria-label="Scroll to projects">Work<span aria-hidden="true"></span></a>
   </div>
 </header>
 
 <main>
-  <section class="reel" id="work" aria-roledescription="carousel" aria-label="Projects">
-    <div class="reel-head">
-      <div>
+  <section class="work" id="work" aria-roledescription="carousel" aria-labelledby="work-title">
+    <div class="wrap work-head reveal">
+      <div class="sec-head">
+        <p class="eyebrow">Selected work</p>
+        <h2 class="sec-title" id="work-title">Projects</h2>
         <p class="hand" aria-hidden="true">swipe, drag, or click through</p>
-        <h2 class="section">Projects</h2>
       </div>
-      <div class="controls">
-        <span class="count" id="count" aria-live="polite">1 of 6</span>
-        <button class="arrow prev" type="button" id="prev" aria-label="Previous project">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 L8 12 L15 19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <button class="arrow next" type="button" id="next" aria-label="Next project">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5 L16 12 L9 19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
+      <div class="arrows-head">
+        <span class="count" id="count" aria-live="polite"><b>01</b> / 06</span>
       </div>
     </div>
 
-    <div class="viewport" id="viewport">
-      <div class="track" id="track">
+    <div class="stage reveal">
+      <div class="viewport" id="viewport">
+        <div class="track" id="track">
 
-        <article class="slide" aria-roledescription="slide" aria-label="1 of 6: Mocean">
-          <div class="media">
-            <img src="mocean.webp" alt="Mocean, a frame-by-frame animation editor, drawing over a sea otter video" loading="lazy" decoding="async" fetchpriority="low"><video muted loop playsinline preload="none"><source src="mocean.mp4" type="video/mp4"></video>
-          </div>
-          <div class="slide-head">
-            <h3>Mocean</h3>
-            <p class="hand">the name up top came from this</p>
-          </div>
-          <div class="credits">
-            <div><p class="label">What it is</p><p>A frame-by-frame animation app in the browser, with onion skinning, layers, pressure brushes, and GIF or video rotoscoping. It exports straight to the web. Named for motion and the ocean: I built it to animate over a sea otter.</p></div>
-            <div><p class="label">Built with</p><p>JavaScript, Canvas API, Pointer Events</p></div>
-            <div><p class="label">Where to see it</p><p><a href="https://mocean-frames.pages.dev/" target="_blank" rel="noopener">mocean-frames.pages.dev</a></p></div>
-          </div>
-        </article>
+          <article class="slide" aria-roledescription="slide" aria-label="1 of 6: Mocean">
+            <div class="p-media">
+              <img src="mocean.webp" alt="Mocean, a frame-by-frame animation editor, drawing over a sea otter video" loading="lazy" decoding="async"><video muted loop playsinline preload="none"><source src="mocean.mp4" type="video/mp4"></video>
+            </div>
+            <div class="p-body">
+              <h3>Mocean</h3>
+              <p class="hand">idea came from my baby sister</p>
+              <p class="p-desc">A frame-by-frame animation app in the browser, with onion skinning, layers, pressure brushes, and GIF or video rotoscoping. It exports straight to the web. Named for motion and the ocean: I built it to animate over a sea otter.</p>
+              <ul class="tags" aria-label="Built with"><li>JavaScript</li><li>Canvas API</li><li>Pointer Events</li></ul>
+              <a class="p-link" href="https://mocean-frames.pages.dev/" target="_blank" rel="noopener">mocean-frames.pages.dev <svg viewBox="0 0 14 14" aria-hidden="true"><path d="M4 10 L10 4 M5 4 H10 V9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></a>
+            </div>
+          </article>
 
-        <article class="slide" aria-roledescription="slide" aria-label="2 of 6: Pod">
-          <div class="media">
-            <img src="pod.webp" alt="Pod app screens: a live map of friends, a plan with RSVPs, and a weekly schedule" loading="lazy" decoding="async" fetchpriority="low"><video muted loop playsinline preload="none"><!-- <source src="pod-demo.mp4" type="video/mp4"> --></video>
-          </div>
-          <div class="slide-head">
-            <h3>Pod</h3>
-            <p class="hand">300+ downloads</p>
-          </div>
-          <div class="credits">
-            <div><p class="label">What it is</p><p>Group planning with live location sharing, RSVPs, and schedules. Built solo, live on the App Store, updated over the air.</p></div>
-            <div><p class="label">Built with</p><p>React Native, TypeScript, Expo, Firebase, GCP</p></div>
-            <div><p class="label">Where to see it</p><p><a href="https://podplananything.com" target="_blank" rel="noopener">podplananything.com</a></p></div>
-          </div>
-        </article>
+          <article class="slide" aria-roledescription="slide" aria-label="2 of 6: Pod">
+            <div class="p-media">
+              <img src="pod.webp" alt="Pod app screens: a live map of friends, a plan with RSVPs, and a weekly schedule" loading="lazy" decoding="async">
+            </div>
+            <div class="p-body">
+              <h3>Pod</h3>
+              <p class="hand">300+ downloads</p>
+              <p class="p-desc">Group planning with live location sharing, RSVPs, and schedules. Built solo, live on the App Store, updated over the air.</p>
+              <ul class="tags" aria-label="Built with"><li>React Native</li><li>TypeScript</li><li>Expo</li><li>Firebase</li><li>GCP</li></ul>
+              <a class="p-link" href="https://podplananything.com" target="_blank" rel="noopener">podplananything.com <svg viewBox="0 0 14 14" aria-hidden="true"><path d="M4 10 L10 4 M5 4 H10 V9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></a>
+            </div>
+          </article>
 
-        <article class="slide" aria-roledescription="slide" aria-label="3 of 6: InkBuddy">
-          <div class="media">
-            <img src="inkbuddy.webp" alt="InkBuddy circling the wrong step of a handwritten algebra problem and writing the fix in red" loading="lazy" decoding="async" fetchpriority="low"><video muted loop playsinline preload="none"><source src="inkbuddy.mp4" type="video/mp4"></video>
-          </div>
-          <div class="slide-head">
-            <h3>InkBuddy</h3>
-            <p class="hand">built at SwampHacks</p>
-          </div>
-          <div class="credits">
-            <div><p class="label">What it is</p><p>Handwritten notes with an AI tutor that writes back on the page. Lasso a problem and it circles the wrong step and explains why in the margin, in ink you can move and resize.</p></div>
-            <div><p class="label">Built with</p><p>React Native, Expo, Skia, Claude API, Supabase</p></div>
-            <div><p class="label">Where to see it</p><p><a href="https://inkbuddy-site.vercel.app" target="_blank" rel="noopener">inkbuddy-site.vercel.app</a></p></div>
-          </div>
-        </article>
+          <article class="slide" aria-roledescription="slide" aria-label="3 of 6: InkBuddy">
+            <div class="p-media">
+              <img src="inkbuddy.webp" alt="InkBuddy circling the wrong step of a handwritten algebra problem and writing the fix in red" loading="lazy" decoding="async"><video muted loop playsinline preload="none"><source src="inkbuddy.mp4" type="video/mp4"></video>
+            </div>
+            <div class="p-body">
+              <h3>InkBuddy</h3>
+              <p class="hand">built at SwampHacks</p>
+              <p class="p-desc">Handwritten notes with an AI tutor that writes back on the page. Lasso a problem and it circles the wrong step and explains why in the margin, in ink you can move and resize.</p>
+              <ul class="tags" aria-label="Built with"><li>React Native</li><li>Expo</li><li>Skia</li><li>Claude API</li><li>Supabase</li></ul>
+              <a class="p-link" href="https://inkbuddy-site.vercel.app" target="_blank" rel="noopener">inkbuddy-site.vercel.app <svg viewBox="0 0 14 14" aria-hidden="true"><path d="M4 10 L10 4 M5 4 H10 V9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></a>
+            </div>
+          </article>
 
-        <article class="slide" aria-roledescription="slide" aria-label="4 of 6: Mycelium">
-          <div class="media">
-            <img src="mycelium.png" alt="Mycelium landing page" loading="lazy" decoding="async" fetchpriority="low"><video muted loop playsinline preload="none"><!-- <source src="mycelium-demo.mp4" type="video/mp4"> --></video>
-          </div>
-          <div class="slide-head">
-            <h3>Mycelium</h3>
-            <p class="hand">free and open source</p>
-          </div>
-          <div class="credits">
-            <div><p class="label">What it is</p><p>A CLI that gives AI coding agents a persistent, searchable memory of any repo, so each task burns fewer tokens. It also draws the codebase as a dependency graph people can read.</p></div>
-            <div><p class="label">Built with</p><p>TypeScript, Claude API, MCP, D3.js, Node.js</p></div>
-            <div><p class="label">Where to see it</p><p><a href="https://www.getmycelium.net/" target="_blank" rel="noopener">getmycelium.net</a></p></div>
-          </div>
-        </article>
+          <article class="slide" aria-roledescription="slide" aria-label="4 of 6: Mycelium">
+            <div class="p-media contain">
+              <img src="mycelium.png" alt="Mycelium landing page" loading="lazy" decoding="async">
+            </div>
+            <div class="p-body">
+              <h3>Mycelium</h3>
+              <p class="hand">free and open source</p>
+              <p class="p-desc">A CLI that gives AI coding agents a persistent, searchable memory of any repo, so each task burns fewer tokens. It also draws the codebase as a dependency graph people can read.</p>
+              <ul class="tags" aria-label="Built with"><li>TypeScript</li><li>Claude API</li><li>MCP</li><li>D3.js</li><li>Node.js</li></ul>
+              <a class="p-link" href="https://www.getmycelium.net/" target="_blank" rel="noopener">getmycelium.net <svg viewBox="0 0 14 14" aria-hidden="true"><path d="M4 10 L10 4 M5 4 H10 V9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></a>
+            </div>
+          </article>
 
+          <article class="slide" aria-roledescription="slide" aria-label="5 of 6: Antibiotic resistance predictor">
+            <div class="p-media">
+              <img src="microbe.webp" alt="Antibiotic resistance predictor" loading="lazy" decoding="async">
+            </div>
+            <div class="p-body">
+              <h3>Resistance predictor</h3>
+              <p class="hand">runs on UF's supercomputer</p>
+              <p class="p-desc">Predicts whether a bacterial genome is resistant, intermediate, or susceptible to an antibiotic, from k-mer features with logistic regression and random forests.</p>
+              <ul class="tags" aria-label="Built with"><li>Python</li><li>scikit-learn</li><li>PyTorch</li><li>HiPerGator</li></ul>
+              <p class="p-where">Research at UF's Epi-Logic Lab</p>
+            </div>
+          </article>
 
+          <article class="slide" aria-roledescription="slide" aria-label="6 of 6: Kyoto exchange pipeline">
+            <div class="p-media">
+              <img src="japan.webp" alt="Kyoto exchange pipeline" loading="lazy" decoding="async">
+            </div>
+            <div class="p-body">
+              <h3>Kyoto pipeline</h3>
+              <p class="hand">98% less manual data entry</p>
+              <p class="p-desc">The application, routing, and email automation behind UF's Kyoto study abroad exchange, replacing hundreds of hours of manual work each cycle.</p>
+              <ul class="tags" aria-label="Built with"><li>Python</li><li>Google Apps Script</li><li>Gmail API</li><li>Qualtrics</li></ul>
+              <p class="p-where">Internal tool for UF</p>
+            </div>
+          </article>
 
-        <article class="slide" aria-roledescription="slide" aria-label="5 of 6: Antibiotic resistance predictor">
-          <div class="media">
-            <img src="microbe.webp" alt="Antibiotic resistance predictor" loading="lazy" decoding="async" fetchpriority="low"><video muted loop playsinline preload="none"><!-- <source src="resistance-viz.mp4" type="video/mp4"> --></video>
-          </div>
-          <div class="slide-head">
-            <h3>Resistance predictor</h3>
-            <p class="hand">runs on UF's supercomputer</p>
-          </div>
-          <div class="credits">
-            <div><p class="label">What it is</p><p>Predicts whether a bacterial genome is resistant, intermediate, or susceptible to an antibiotic, from k-mer features with logistic regression and random forests.</p></div>
-            <div><p class="label">Built with</p><p>Python, scikit-learn, PyTorch, HiPerGator</p></div>
-            <div><p class="label">Where to see it</p><p>Research at UF's Epi-Logic Lab</p></div>
-          </div>
-        </article>
-
-        <article class="slide" aria-roledescription="slide" aria-label="6 of 6: Kyoto exchange pipeline">
-          <div class="media">
-            <img src="japan.webp" alt="Kyoto exchange pipeline" loading="lazy" decoding="async" fetchpriority="low"><video muted loop playsinline preload="none"><!-- <source src="kyoto-pipeline.mp4" type="video/mp4"> --></video>
-          </div>
-          <div class="slide-head">
-            <h3>Kyoto pipeline</h3>
-            <p class="hand">98% less manual data entry</p>
-          </div>
-          <div class="credits">
-            <div><p class="label">What it is</p><p>The application, routing, and email automation behind UF's Kyoto study abroad exchange, replacing hundreds of hours of manual work each cycle.</p></div>
-            <div><p class="label">Built with</p><p>Python, Google Apps Script, Gmail API, Qualtrics</p></div>
-            <div><p class="label">Where to see it</p><p>Internal tool for UF</p></div>
-          </div>
-        </article>
-
+        </div>
+      </div>
+      <div class="arrows">
+        <button class="arrow prev" type="button" id="prev" aria-label="Previous project">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 L8 12 L15 19" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="arrow next" type="button" id="next" aria-label="Next project">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5 L16 12 L9 19" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
     </div>
 
     <div class="strip" id="strip" aria-label="Jump to a project">
-      <button type="button"><span class="n">1</span><span class="t">Mocean</span></button>
-      <button type="button"><span class="n">2</span><span class="t">Pod</span></button>
-      <button type="button"><span class="n">3</span><span class="t">InkBuddy</span></button>
-      <button type="button"><span class="n">4</span><span class="t">Mycelium</span></button>
-      <button type="button"><span class="n">5</span><span class="t">Resistance predictor</span></button>
-      <button type="button"><span class="n">6</span><span class="t">Kyoto pipeline</span></button>
+      <button type="button"><span class="n">01</span><span class="t">Mocean</span></button>
+      <button type="button"><span class="n">02</span><span class="t">Pod</span></button>
+      <button type="button"><span class="n">03</span><span class="t">InkBuddy</span></button>
+      <button type="button"><span class="n">04</span><span class="t">Mycelium</span></button>
+      <button type="button"><span class="n">05</span><span class="t">Resistance predictor</span></button>
+      <button type="button"><span class="n">06</span><span class="t">Kyoto pipeline</span></button>
     </div>
   </section>
 
-  <section class="crew" id="about">
-    <div class="crew-inner">
-      <div class="crew-text">
-        <h2 class="section">About me</h2>
-        <div class="about-copy">
-          <p>I'm Minh, a computer science student at the University of Florida, graduating December 2027.</p>
-          <p>Most of my projects start the same way: I notice something that should exist, then I build it and ship it. That's how Pod, InkBuddy, Mycelium, and Mocean happened.</p>
-          <p>Away from the keyboard, I'm an ocean person. I watch a lot of wildlife documentaries and care about conservation. My favorite work is where tech and the natural world meet.</p>
+  <section class="about" id="about" aria-labelledby="about-title">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <p class="eyebrow">About</p>
+        <h2 class="sec-title" id="about-title">A little <em>about me</em></h2>
+      </div>
+      <div class="about-grid">
+        <figure class="portrait reveal">
+          <img src="headshot.webp" alt="Minh Tran" loading="lazy">
+          <figcaption class="hand" aria-hidden="true">
+            <svg width="40" height="26" viewBox="0 0 40 26"><path d="M36 22 C 26 20, 12 14, 6 4 M6 4 L 6 13 M6 4 L 15 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+            that's me
+          </figcaption>
+        </figure>
+        <div class="reveal">
+          <div class="about-copy">
+            <p class="lead">I'm Minh, studying computer science and economics at the University of Florida, graduating <em>December 2027</em>.</p>
+            <p>Most of my projects start the same way: I notice something that should exist, then I build it and ship it. That's how Pod, InkBuddy, Mycelium, and Mocean happened.</p>
+            <p>Away from the keyboard, I'm an ocean person. I watch a lot of wildlife documentaries and care about conservation. My favorite work is where tech and the natural world meet.</p>
+          </div>
+          <dl class="facts">
+            <div><dt>Based in</dt><dd>Gainesville, Florida</dd></div>
+            <div><dt>Into</dt><dd>The ocean, marine biology, machine learning, robotics</dd></div>
+            <div><dt>Languages</dt><dd>Python, TypeScript, JavaScript, Bash</dd></div>
+            <div><dt>Tools</dt><dd>React Native, Expo, PyTorch, scikit-learn, Firebase, GCP, HiPerGator</dd></div>
+          </dl>
         </div>
-        <dl class="roll">
-          <dt>Based in</dt><dd>Gainesville, Florida</dd>
-          <dt>Into</dt><dd>The ocean, marine biology, machine learning, robotics</dd>
-          <dt>Languages</dt><dd>Python, TypeScript, JavaScript, Bash</dd>
-          <dt>Tools</dt><dd>React Native, Expo, PyTorch, scikit-learn, Firebase, GCP, HiPerGator</dd>
-        </dl>
-      </div>
-      <div class="crew-photo">
-        <img src="headshot.webp" alt="Minh Tran" loading="lazy">
-        <p class="hand" aria-hidden="true">
-          <svg width="40" height="26" viewBox="0 0 40 26"><path d="M36 22 C 26 20, 12 14, 6 4 M6 4 L 6 13 M6 4 L 15 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
-          that's me
-        </p>
       </div>
     </div>
   </section>
 
-  <section class="exp" id="experience">
-    <div class="exp-inner">
-      <h2 class="section">Experience</h2>
-      <ol class="jobs">
-        <li class="job">
-          <p class="when">August 2026 to now</p>
-          <div>
-            <h3>Machine learning research intern</h3>
+  <section class="exp" id="experience" aria-labelledby="exp-title">
+    <div class="wrap exp-grid">
+      <div class="exp-side reveal">
+        <div class="sec-head">
+          <p class="eyebrow">Experience</p>
+          <h2 class="sec-title" id="exp-title">Where I've <em>worked</em></h2>
+          <p class="hand" aria-hidden="true">all at once, somehow</p>
+        </div>
+        <ul class="stats">
+          <li><b>2</b><span>research labs, applying ML to genomics and microscopy</span></li>
+          <li><b>4</b><span>capstone teams mentored at a time</span></li>
+          <li><b>1</b><span>app shipped solo to the App Store</span></li>
+        </ul>
+      </div>
+      <ol class="timeline" id="timeline">
+          <li class="job reveal">
+            <div class="job-top">
+              <div>
+                <p class="kind">Research</p>
+                <h3>Machine learning research intern</h3>
+              </div>
+              <p class="when">Aug 2026 – now</p>
+            </div>
             <p class="where">ME2 Lab, UF Materials Science</p>
-            <p>Applying ML to electron microscopy: large-scale electron diffraction analysis, plus vision models that identify crystal structures and classify materials by their internal structure. I built an interactive 3D electron diffraction simulator to help the team see and understand patterns.</p>
-          </div>
-        </li>
-        <li class="job">
-          <p class="when">Oct 2025 to now</p>
-          <div>
-            <h3>Machine learning research assistant</h3>
+            <p class="what">Applying ML to electron microscopy: large-scale electron diffraction analysis, plus vision models that identify crystal structures and classify materials by their internal structure. I built an interactive 3D electron diffraction simulator to help the team see and understand patterns.</p>
+          </li>
+          <li class="job reveal">
+            <div class="job-top">
+              <div>
+                <p class="kind">Research</p>
+                <h3>Machine learning research assistant</h3>
+              </div>
+              <p class="when">Oct 2025 – now</p>
+            </div>
             <p class="where">Epi-Logic Lab, University of Florida</p>
-            <p>Building Python pipelines that process clinical genomic data on UF's HiPerGator cluster, and the k-mer datasets and models behind our antibiotic resistance classification work.</p>
-          </div>
-        </li>
-        <li class="job">
-          <p class="when">Dec 2025 to now</p>
-          <div>
-            <h3>Founder and solo developer</h3>
+            <p class="what">Building Python pipelines that process clinical genomic data on UF's HiPerGator cluster, and the k-mer datasets and models behind our antibiotic resistance classification work.</p>
+          </li>
+          <li class="job reveal">
+            <div class="job-top">
+              <div>
+                <p class="kind">Founder</p>
+                <h3>Founder and solo developer</h3>
+              </div>
+              <p class="when">Dec 2025 – now</p>
+            </div>
             <p class="where">Pod</p>
-            <p>Designed, built, and launched a real-time group planning app for iOS, from live GPS sharing and push notifications to four rounds of App Store review and over-the-air production updates.</p>
-          </div>
-        </li>
-        <li class="job">
-          <p class="when">Aug 2025 to now</p>
-          <div>
-            <h3>Teaching assistant, Senior Capstone Design</h3>
+            <p class="what">Designed, built, and launched a real-time group planning app for iOS, from live GPS sharing and push notifications to four rounds of App Store review and over-the-air production updates.</p>
+          </li>
+          <li class="job reveal">
+            <div class="job-top">
+              <div>
+                <p class="kind">Teaching</p>
+                <h3>Teaching assistant, Senior Capstone Design</h3>
+              </div>
+              <p class="when">Aug 2025 – now</p>
+            </div>
             <p class="where">UF Computer Engineering</p>
-            <p>Mentoring four hardware and software teams at a time with design reviews, debugging help, and weekly presentation coaching. Teams have built an ASL-teaching robotic hand, now partnered with Notre Dame researchers, and a stacked microgreen grower. One team published a research paper.</p>
-          </div>
-        </li>
-        <li class="job">
-          <p class="when">July 2026 to now</p>
-          <div>
-            <h3>Founding officer and External VP</h3>
+            <p class="what">Mentoring four hardware and software teams at a time with design reviews, debugging help, and weekly presentation coaching. Teams have built an ASL-teaching robotic hand, now partnered with Notre Dame researchers, and a stacked microgreen grower. One team published a research paper.</p>
+          </li>
+          <li class="job reveal">
+            <div class="job-top">
+              <div>
+                <p class="kind">Leadership</p>
+                <h3>Founding officer and External VP</h3>
+              </div>
+              <p class="when">July 2026 – now</p>
+            </div>
             <p class="where">Embodied Intelligence Group, UF's robotics club</p>
-            <p>Running outreach with companies for funding and mentorship, which landed two hardware sponsors who donated servos and Arduino Nanos. I also lead workshops and work on the ML team training robotic arms to do tasks.</p>
-          </div>
-        </li>
-        <li class="job">
-          <p class="when">Mar 2025 to now</p>
-          <div>
-            <h3>Software automation engineer</h3>
+            <p class="what">Running outreach with companies for funding and mentorship, which landed two hardware sponsors who donated servos and Arduino Nanos. I also lead workshops and work on the ML team training robotic arms to do tasks.</p>
+          </li>
+          <li class="job reveal">
+            <div class="job-top">
+              <div>
+                <p class="kind">Engineering</p>
+                <h3>Software automation engineer</h3>
+              </div>
+              <p class="when">Mar 2025 – now</p>
+            </div>
             <p class="where">UF Computer and Information Science and Engineering</p>
-            <p>Built the survey, routing, and email automation behind the UF and Kyoto study abroad exchange, cutting manual data entry by 98%.</p>
-          </div>
-        </li>
+            <p class="what">Built the survey, routing, and email automation behind the UF and Kyoto study abroad exchange, cutting manual data entry by 98%.</p>
+          </li>
       </ol>
     </div>
   </section>
 
-  <section class="end" id="contact">
-    <div class="end-inner">
-      <h2 class="big">Say hi</h2>
+  <section class="end" id="contact" aria-labelledby="contact-title">
+    <div class="wrap end-inner reveal">
+      <p class="eyebrow">Contact</p>
+      <h2 class="big" id="contact-title">Say <em>hi</em></h2>
       <p class="sub">I'm looking for Summer 2027 software engineering and AI/ML internships.</p>
       <a class="mail" href="mailto:minhtran60524@gmail.com">minhtran60524@gmail.com</a>
       <p class="hand" aria-hidden="true">I answer fast</p>
@@ -534,26 +609,44 @@
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Live timecode in the hero frame, at 24 fps like film.
-  const tc = document.getElementById('timecode');
-  const pad = n => String(n).padStart(2, '0');
-  const t0 = performance.now();
-  function tick() {
-    const f = Math.floor((performance.now() - t0) / (1000 / 24));
-    tc.textContent = `${pad(Math.floor(f / 86400))}:${pad(Math.floor(f / 1440) % 60)}:${pad(Math.floor(f / 24) % 60)}:${pad(f % 24)}`;
-    if (!document.hidden) setTimeout(tick, 1000 / 24);
-  }
-  if (!tc) { /* timecode removed from the hero */ }
-  else if (reduce) tc.textContent = '00:00:00:01';
-  else { tick();document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); }); }
+  // Nav gets a soft blurred background once you scroll past the top.
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('scrolled', scrollY > 40);
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 
-  // Carousel
+  // Fade sections up as they come into view.
+  const reveals = document.querySelectorAll('.reveal');
+  if (reduce || !('IntersectionObserver' in window)) reveals.forEach(el => el.classList.add('in'));
+  else {
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    }), { rootMargin: '0px 0px -10% 0px', threshold: 0.08 });
+    reveals.forEach(el => io.observe(el));
+  }
+
+  // Experience: the timeline line fills in as you scroll through it.
+  const timeline = document.getElementById('timeline');
+  if (!reduce) {
+    let ticking = false;
+    const fill = () => {
+      ticking = false;
+      const r = timeline.getBoundingClientRect();
+      const p = Math.min(1, Math.max(0, (innerHeight * 0.65 - r.top) / r.height));
+      timeline.style.setProperty('--progress', p.toFixed(3));
+    };
+    addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(fill); } }, { passive: true });
+    addEventListener('resize', fill, { passive: true });
+    fill();
+  }
+
+  // ---------- Projects carousel ----------
   const viewport = document.getElementById('viewport');
-  const track = document.getElementById('track');
-  const slides = [...track.querySelectorAll('.slide')];
+  const slides = [...document.querySelectorAll('#track .slide')];
   const tabs = [...document.querySelectorAll('#strip button')];
   const count = document.getElementById('count');
   const n = slides.length;
+  const two = k => String(k).padStart(2, '0');
   let cur = 0, onScreen = false, dragX = 0;
 
   const rel = new Array(n).fill(null);
@@ -561,26 +654,31 @@
   function relOf(k) { let r = ((k - cur) % n + n) % n; if (r > n / 2) r -= n; return r; }
   function place(extra) {
     const w = slides[0].offsetWidth;
-    const gap = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--gap')) || 28;
+    const gap = parseFloat(getComputedStyle(viewport).getPropertyValue('--peek-gap')) || 110;
+    // The neighbors peek in from the side margins. The image sits on the left of each slide,
+    // so the one on the left is shifted by its image width, which keeps its image (not its
+    // hidden text) peeking in.
     slides.forEach((s, k) => {
       const r = relOf(k);
+      const m = s.querySelector('.p-media').offsetWidth;
+      const x = r > 0 ? r * (w + gap) : r < 0 ? -(m + gap) + (r + 1) * (w + gap) : 0;
       // A slide that wraps from one far edge to the other jumps instantly while hidden.
       const jump = rel[k] === null || Math.abs(r - rel[k]) > 1;
       rel[k] = r;
       s.style.transition = jump ? 'none' : '';
-      s.style.transform = `translate3d(${r * (w + gap) + (extra || 0)}px, 0, 0) scale(${r === 0 ? 1 : 0.9})`;
+      s.style.transform = `translate3d(${x + (extra || 0)}px, 0, 0)`;
       s.classList.toggle('is-active', r === 0);
       s.classList.toggle('is-side', Math.abs(r) === 1);
     });
   }
+
   // Videos load nothing until the reel is close to the screen. Then the centered one
   // loads fully and its neighbors load just enough to start the moment they're swiped to.
+  // On data saver or 2G, or if a video fails, the image stays.
   let near = false;
   const rank = { none: 0, metadata: 1, auto: 2 };
-  // On data saver or a 2G connection, skip videos entirely and keep the images.
   const conn = navigator.connection;
   const lite = !!(conn && (conn.saveData || /2g/.test(conn.effectiveType || '')));
-  // A video that errors drops its source, so it is never retried and its image stays.
   function drop(v) {
     v.classList.remove('on');
     v.querySelectorAll('source').forEach(src => src.remove());
@@ -590,27 +688,26 @@
   slides.forEach(s => {
     const v = s.querySelector('video');
     if (!v || !v.querySelector('source')) return;
-    if (lite) { drop(v); return; }
+    if (lite || reduce) { drop(v); return; }
     v.addEventListener('playing', () => v.classList.add('on'));
     v.addEventListener('error', () => drop(v));
     v.querySelectorAll('source').forEach(src => src.addEventListener('error', () => drop(v)));
   });
   function warm(v, level) {
-    if (!v || !v.querySelector('source') || rank[v.preload] >= rank[level]) return;
+    if (rank[v.preload] >= rank[level]) return;
     v.preload = level;
     if (v.readyState === 0) v.load();
   }
   function syncVideos() {
     slides.forEach((s, i) => {
       const v = s.querySelector('video');
-      // Image-only slides never get play().
       if (!v || !v.querySelector('source')) return;
-      if (near && !reduce) warm(v, i === cur ? 'auto' : Math.abs(relOf(i)) === 1 ? 'metadata' : 'none');
-      if (i === cur && onScreen && !reduce) {
-        const p = v.play(); if (p && p.catch) p.catch(() => {});
-      } else v.pause();
+      if (near) warm(v, i === cur ? 'auto' : Math.abs(relOf(i)) === 1 ? 'metadata' : 'none');
+      if (i === cur && onScreen && !document.hidden) { const p = v.play(); if (p && p.catch) p.catch(() => {}); }
+      else v.pause();
     });
   }
+
   function go(i) {
     cur = (i + n) % n;
     slides.forEach((s, k) => {
@@ -619,7 +716,7 @@
       s.querySelectorAll('a').forEach(a => { a.tabIndex = on ? 0 : -1; });
     });
     tabs.forEach((t, k) => t.setAttribute('aria-current', k === cur ? 'true' : 'false'));
-    count.textContent = `${cur + 1} of ${n}`;
+    count.innerHTML = `<b>${two(cur + 1)}</b> / ${two(n)}`;
     place();
     syncVideos();
   }
@@ -634,7 +731,7 @@
   viewport.tabIndex = 0;
   viewport.setAttribute('aria-label', 'Projects. Use the left and right arrow keys to move between them.');
 
-  // Click a dimmed side slide to bring it in. Drag or swipe to move through them.
+  // Drag or swipe to move through the projects.
   let down = null, moved = false;
   viewport.addEventListener('pointerdown', e => {
     if (e.button !== 0) return;
@@ -662,6 +759,7 @@
   viewport.addEventListener('pointercancel', release);
   viewport.addEventListener('click', e => {
     if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; return; }
+    // Click a peeking project to bring it in.
     const s = e.target.closest('.slide');
     if (s && !s.classList.contains('is-active')) { e.preventDefault(); go(slides.indexOf(s)); }
   }, true);
@@ -684,16 +782,15 @@
   // Only play the active video while the reel is on screen.
   new IntersectionObserver(es => { onScreen = es[0].isIntersecting; syncVideos(); }, { threshold: 0.25 }).observe(viewport);
   // Wait for the page's own load first, so videos never compete with the hero.
-  // Scrolling to the reel before then still plays the video, since play() loads it.
   const watchNear = () => new IntersectionObserver(es => {
     if (es[0].isIntersecting && !near) { near = true; syncVideos(); }
   }, { rootMargin: '50% 0px' }).observe(viewport);
   if (document.readyState === 'complete') watchNear(); else addEventListener('load', watchNear, { once: true });
-  document.addEventListener('visibilitychange', () => { if (document.hidden) slides.forEach(s => { const v = s.querySelector('video'); if (v) v.pause(); }); else syncVideos(); });
+  document.addEventListener('visibilitychange', syncVideos);
 
   addEventListener('resize', () => place(), { passive: true });
   go(0);
-  // Re-center once fonts load, since titles change slide heights and widths settle.
+  // Re-center once fonts load, since titles change slide heights.
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => place());
 })();
 </script>
