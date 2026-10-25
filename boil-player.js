@@ -193,8 +193,6 @@
     if (ov) ro.observe(ov);
     size();
 
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { draw(n - 1); return; }
-
     // Only animate while the canvas is on screen and the tab is visible.
     let i = 0, timer = null, onScreen = true;
     function step() {
