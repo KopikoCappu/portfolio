@@ -75,12 +75,13 @@
     top: calc((100cqh - var(--sh)) * .42);
   }
   .sky-stage > img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; }
-  .sky-stage > .sky-fog { top: 63.76%; height: auto; opacity: .6; will-change: transform; }
+  /* fog.webp is the photo's full size (clear above the fog), so it lines up like the other layers */
+  .sky-stage > .sky-fog { opacity: .6; will-change: transform; }
   /* the original photo sits on top until every cloud has loaded, then fades away */
   .sky-still { transition: opacity 1.2s ease; }
   .sky-still.gone { opacity: 0; }
   .sky-clouds { position: absolute; inset: 0; overflow: hidden; }
-  .sky-clouds img { position: absolute; will-change: transform; }
+  .sky-clouds canvas { position: absolute; will-change: transform; }
   .sky-dim { position: absolute; inset: 0; opacity: 0; will-change: opacity; background: linear-gradient(180deg, rgba(0, 13, 21, .62), rgba(11, 13, 21, .72) 60%, rgba(11, 13, 21, .82)); }
 
   /* ---------- nav: links split to either side of the name ---------- */
@@ -389,11 +390,11 @@
 
 <div class="sky" aria-hidden="true">
   <div class="sky-stage">
-    <img src="sky.webp" alt="">
+    <img data-src="sky.webp" alt="">
     <div class="sky-clouds" id="sky-clouds"></div>
-    <img src="mountains.webp" alt="">
+    <img data-src="mountains.webp" alt="">
     <div class="sky-clouds" id="sky-clouds-front"></div>
-    <img class="sky-fog" id="sky-fog" src="fog.webp" alt="">
+    <img class="sky-fog" id="sky-fog" data-src="fog.webp" alt="">
     <img class="sky-still" id="sky-still" src="still.webp" alt="" fetchpriority="high">
   </div>
   <img class="blur" src="still.webp" alt="">
@@ -711,19 +712,28 @@
     const still = document.getElementById('sky-still');
     const layers = [...document.querySelectorAll('.sky-stage > img:not(.sky-still)')];
     const ready = img => img.decode ? img.decode() : new Promise((ok, no) => { img.onload = ok; img.onerror = no; });
+    // the layers only start downloading once the still is in, so the hero paints as fast as before
+    const stillIn = still.complete ? Promise.resolve() : new Promise(ok => { still.onload = still.onerror = ok; });
     if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      fetch('clouds/sprites.json')
+      stillIn
+        .then(() => { layers.forEach(img => { img.src = img.dataset.src; }); return fetch('clouds/sprites.json'); })
         .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
         .then(sprites => Promise.all([...sprites.map(s => {
           const img = new Image();
-          img.alt = '';
           img.src = 'clouds/' + s.f;
-          img.style.left = (s.x / W * 100) + '%';
-          img.style.top = (s.y / H * 100) + '%';
-          img.style.width = (s.w / W * 100) + '%';
+          // each cloud is drawn into a canvas: same pixels, but browsers never count a canvas as the
+          // page's main image, so clouds arriving late don't make the page look slow in speed tests
+          const el = document.createElement('canvas');
+          el.width = s.w; el.height = s.h;
+          el.style.left = (s.x / W * 100) + '%';
+          el.style.top = (s.y / H * 100) + '%';
+          el.style.width = (s.w / W * 100) + '%';
           // speed in photo pixels per second: higher clouds move faster, front ones a bit faster still
           const speed = (2.2 + 7 * Math.max(0, 1 - s.y / 450) + Math.random() * 1.2) * (s.front ? 1.3 : 1) * 2;
-          return ready(img).then(() => ({ el: img, x: s.x, w: s.w, off: 0, speed, front: s.front }));
+          return ready(img).then(() => {
+            el.getContext('2d').drawImage(img, 0, 0);
+            return { el, x: s.x, w: s.w, off: 0, speed, front: s.front };
+          });
         }), ...layers.map(ready)]))
         .then(all => {
           const clouds = all.slice(0, all.length - layers.length);
