@@ -27,3 +27,5 @@ dist-ssr
 .mcp.json
 CLAUDE.md
 .mycelium/
+# source layers for the cloud animation (webp copies are what ships)
+cloud-layers/
